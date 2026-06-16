@@ -1,0 +1,6 @@
+{
+  "name": "Artist Portfolio",
+  "description": "An interactive, curated digital gallery showcasing classical and contemporary experimental paintings, with responsive layouts, lighting simulations, and client acquisition features.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
