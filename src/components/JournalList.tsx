@@ -12,13 +12,13 @@ export default function JournalList({ posts, onLikePost }: JournalListProps) {
   const [activePost, setActivePost] = useState<JournalPost | null>(null);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12 bg-[#0A0A0A]" id="studio-journal-section">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12 bg-[#FAFAFA] dark:bg-[#0A0A0A] transition-colors duration-300" id="studio-journal-section">
       <div className="text-center mb-8 sm:mb-14">
-        <h3 className="text-lg sm:text-2xl font-light tracking-widest text-[#E5E5E5] font-display uppercase flex items-center justify-center gap-2 sm:gap-3">
+        <h3 className="text-lg sm:text-2xl font-light tracking-widest text-neutral-900 dark:text-[#E5E5E5] font-display uppercase flex items-center justify-center gap-2 sm:gap-3">
           <BookMarked className="w-5 h-5 text-brand-gold" />
           THE STUDIO JOURNAL
         </h3>
-        <p className="text-xs text-zinc-400 font-serif italic max-w-md mx-auto mt-3 leading-relaxed">
+        <p className="text-xs text-neutral-500 dark:text-zinc-400 font-serif italic max-w-md mx-auto mt-3 leading-relaxed">
           Deep dives into historical pigments, canvas geometries, and essays recorded straight from the active easel.
         </p>
       </div>
@@ -29,23 +29,23 @@ export default function JournalList({ posts, onLikePost }: JournalListProps) {
             key={post.id}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col sm:flex-row gap-4 sm:gap-8 bg-[#111111] p-4 sm:p-6 md:p-8 border border-white/10 hover:border-brand-gold/30 transition-all duration-500 shadow-2xl"
+            className="flex flex-col sm:flex-row gap-4 sm:gap-8 bg-white dark:bg-[#111111] p-4 sm:p-6 md:p-8 border border-neutral-200 dark:border-white/10 hover:border-brand-gold/30 transition-all duration-500 shadow-md dark:shadow-2xl"
           >
             {/* Post Image Cover */}
-            <div className="w-full sm:w-48 h-36 sm:h-40 flex-shrink-0 overflow-hidden bg-[#0A0A0A] border border-white/5 relative">
+            <div className="w-full sm:w-48 h-36 sm:h-40 flex-shrink-0 overflow-hidden bg-neutral-100 dark:bg-[#0A0A0A] border border-neutral-100 dark:border-white/5 relative">
               <img
                 src={post.imageUrl}
                 alt={post.title}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover filter grayscale contrast-110 hover:grayscale-0 hover:scale-105 transition-all duration-700 ease-out"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#111111]/30 to-transparent pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-neutral-100/30 dark:from-[#111111]/30 to-transparent pointer-events-none"></div>
             </div>
 
             {/* Post Details */}
             <div className="flex-1 flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-[#E5E5E5]/40 mb-3 font-sans">
+                <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-neutral-400 dark:text-[#E5E5E5]/40 mb-3 font-sans">
                   <span className="flex items-center gap-1.5">
                     <Calendar className="w-3.5 h-3.5 text-brand-gold/50" />
                     {post.date}
@@ -57,20 +57,20 @@ export default function JournalList({ posts, onLikePost }: JournalListProps) {
                   </span>
                 </div>
 
-                <h4 className="text-lg md:text-xl font-light tracking-tight text-[#E5E5E5] font-display leading-snug">
+                <h4 className="text-lg md:text-xl font-light tracking-tight text-neutral-900 dark:text-[#E5E5E5] font-display leading-snug">
                   {post.title}
                 </h4>
                 
-                <p className="text-xs text-[#E5E5E5]/60 mt-3 line-clamp-2 md:line-clamp-3 leading-relaxed font-sans font-light">
+                <p className="text-xs text-neutral-600 dark:text-[#E5E5E5]/60 mt-3 line-clamp-2 md:line-clamp-3 leading-relaxed font-sans font-light">
                   {post.excerpt}
                 </p>
               </div>
 
               {/* Action Buttons inside Post Card */}
-              <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
+              <div className="mt-6 pt-4 border-t border-neutral-100 dark:border-white/5 flex items-center justify-between">
                 <button
                   onClick={() => onLikePost(post.id)}
-                  className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-[#E5E5E5]/50 hover:text-brand-gold transition-colors cursor-pointer"
+                  className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-neutral-500 dark:text-[#E5E5E5]/50 hover:text-brand-gold transition-colors cursor-pointer"
                 >
                   <Heart className="w-3.5 h-3.5 text-brand-gold/60" />
                   <span>{post.likes} notes</span>

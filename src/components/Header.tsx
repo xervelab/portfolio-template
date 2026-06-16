@@ -41,10 +41,10 @@ const HIGHLIGHTS: Highlight[] = [
   {
     id: "h2",
     title: "🖼️ Paris Show",
-    coverUrl: "https://images.unsplash.com/photo-1492037766109-2110e4625a61?auto=format&fit=crop&q=80&w=200",
+    coverUrl: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=200",
     stories: [
       {
-        url: "https://images.unsplash.com/photo-1492037766109-2110e4625a61?auto=format&fit=crop&q=80&w=800",
+        url: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=800",
         type: "image",
         caption: "Galerie de l'Élysée opening. Grateful for everyone who turned up!"
       },
@@ -166,7 +166,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
   };
 
   return (
-    <header className="py-6 sm:py-10 md:py-14 border-b border-white/10" id="artist-profile-header">
+    <header className="py-6 sm:py-10 md:py-14 border-b border-neutral-200 dark:border-white/10 transition-colors duration-300" id="artist-profile-header">
       {/* Top Profile Card Container */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col md:flex-row items-center md:items-start md:gap-16 gap-5 sm:gap-8">
@@ -174,7 +174,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
           {/* Avatar Area with Elegant Minimal gold-cream Border */}
           <div className="relative group flex-shrink-0 cursor-pointer">
             <div className="absolute -inset-1.5 bg-gradient-to-tr from-brand-gold to-brand-cream rounded-full opacity-70 group-hover:opacity-100 transition duration-500 blur-xs"></div>
-            <div className="relative p-1.5 bg-[#0A0A0A] rounded-full">
+            <div className="relative p-1.5 bg-white dark:bg-[#0A0A0A] rounded-full">
               <img
                 src={profile.avatarUrl}
                 alt={profile.name}
@@ -184,7 +184,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
               />
             </div>
             {profile.availableForCommissions && (
-              <span className="absolute bottom-1 right-1 bg-[#0A0A0A] border border-brand-gold/60 text-brand-gold text-[9px] uppercase tracking-widest font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-xl backdrop-blur-md">
+              <span className="absolute bottom-1 right-1 bg-white dark:bg-[#0A0A0A] border border-brand-gold/60 text-brand-gold text-[9px] uppercase tracking-widest font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-xl backdrop-blur-md">
                 <span className="w-1.5 h-1.5 bg-brand-gold rounded-full animate-ping"></span>
                 Active
               </span>
@@ -195,7 +195,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
           <div className="flex-1 text-center md:text-left min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 mb-4 sm:mb-6">
               <div className="flex items-center justify-center md:justify-start gap-3">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-light tracking-tight text-[#E5E5E5] font-display" id="artist-title">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-light tracking-tight text-neutral-900 dark:text-[#E5E5E5] font-display" id="artist-title">
                   {profile.username}
                 </h1>
                 <span className="text-brand-gold border border-brand-gold/30 p-1 rounded-full inline-flex items-center justify-center text-[8px]" title="Represented Artist">
@@ -209,8 +209,8 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
                   onClick={handleFollowToggle}
                   className={`text-[10px] sm:text-xs font-medium uppercase tracking-widest px-4 sm:px-6 py-2 rounded-md transition-all duration-300 font-sans cursor-pointer ${
                     isFollowing
-                      ? "bg-neutral-900 text-brand-gold border border-brand-gold/20 hover:bg-neutral-800"
-                      : "bg-[#E5E5E5] text-black hover:bg-brand-cream"
+                      ? "bg-neutral-100 dark:bg-neutral-900 text-brand-gold border border-brand-gold/20 hover:bg-neutral-200 dark:hover:bg-neutral-800"
+                      : "bg-neutral-900 dark:bg-[#E5E5E5] text-white dark:text-black hover:bg-brand-gold dark:hover:bg-brand-cream"
                   }`}
                   id="follow-button"
                 >
@@ -218,35 +218,35 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
                 </button>
                 <button
                   onClick={onInquireClick}
-                  className="text-[10px] sm:text-xs font-medium uppercase tracking-widest px-3 sm:px-5 py-2 bg-neutral-950 border border-white/10 hover:border-brand-gold/50 text-[#E5E5E5] hover:text-brand-gold rounded-md transition-all duration-300 cursor-pointer flex items-center gap-1.5 sm:gap-2 font-sans"
+                  className="text-[10px] sm:text-xs font-medium uppercase tracking-widest px-3 sm:px-5 py-2 bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-white/10 hover:border-brand-gold/50 text-neutral-700 dark:text-[#E5E5E5] hover:text-brand-gold rounded-md transition-all duration-300 cursor-pointer flex items-center gap-1.5 sm:gap-2 font-sans"
                   id="inquire-button"
                 >
                   <MessageSquare className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   Inquire
                 </button>
-                <button
+                {/* <button
                   onClick={onAddPostClick}
                   className="p-2 bg-neutral-950 border border-white/10 hover:border-brand-gold/50 text-[#E5E5E5] hover:text-brand-gold rounded-md transition-all duration-300 cursor-pointer"
                   title="Upload artwork"
                   id="upload-button"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                </button>
+                </button> */}
               </div>
             </div>
 
             {/* Metrics List */}
-            <div className="flex items-center justify-center md:justify-start gap-4 sm:gap-8 mb-6 border-y md:border-y-0 border-white/10 py-3 md:py-0 text-[#E5E5E5]/60 font-sans font-light text-[11px] sm:text-xs tracking-wider">
+            <div className="flex items-center justify-center md:justify-start gap-4 sm:gap-8 mb-6 border-y md:border-y-0 border-neutral-200 dark:border-white/10 py-3 md:py-0 text-neutral-500 dark:text-[#E5E5E5]/60 font-sans font-light text-[11px] sm:text-xs tracking-wider">
               <span>
-                <strong className="text-white font-medium">9</strong> masterpieces
+                <strong className="text-neutral-900 dark:text-white font-medium">9</strong> masterpieces
               </span>
               <span>
-                <strong className="text-white font-medium">
+                <strong className="text-neutral-900 dark:text-white font-medium">
                   {formatStats(followers)}
                 </strong> followers
               </span>
               <span>
-                <strong className="text-white font-medium">
+                <strong className="text-neutral-900 dark:text-white font-medium">
                   {profile.followingCount}
                 </strong> following
               </span>
@@ -254,14 +254,14 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
 
             {/* Detailed Credentials & Bio */}
             <div className="text-xs sm:text-sm space-y-2 sm:space-y-3 mt-3 sm:mt-4">
-              <p className="font-serif italic text-base sm:text-lg text-brand-cream/90 font-light tracking-wide">{profile.name}</p>
+              <p className="font-serif italic text-base sm:text-lg text-brand-gold dark:text-brand-cream/90 font-light tracking-wide">{profile.name}</p>
               <p className="text-brand-gold/80 italic text-[11px] sm:text-xs tracking-wide font-serif">{profile.tagline}</p>
-              <p className="whitespace-pre-line leading-relaxed text-[#E5E5E5]/80 font-light max-w-xl text-center md:text-left text-xs sm:text-sm">
+              <p className="whitespace-pre-line leading-relaxed text-neutral-700 dark:text-[#E5E5E5]/80 font-light max-w-xl text-center md:text-left text-xs sm:text-sm">
                 {profile.bio}
               </p>
 
               {/* Sub-details Row */}
-              <div className="pt-3 flex flex-wrap justify-center md:justify-start gap-3 sm:gap-5 text-[11px] sm:text-xs text-[#E5E5E5]/50 font-sans tracking-wide">
+              <div className="pt-3 flex flex-wrap justify-center md:justify-start gap-3 sm:gap-5 text-[11px] sm:text-xs text-neutral-500 dark:text-[#E5E5E5]/50 font-sans tracking-wide">
                 <span className="flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-brand-gold/60" />
                   {profile.location}
@@ -281,7 +281,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
         </div>
 
         {/* Highlight Story Bubbles Row */}
-        <div className="mt-8 sm:mt-12 overflow-x-auto scrollbar-none flex justify-start md:justify-center gap-4 sm:gap-8 py-3 px-2 border-t border-white/10">
+        <div className="mt-8 sm:mt-12 overflow-x-auto scrollbar-none flex justify-start md:justify-center gap-4 sm:gap-8 py-3 px-2 border-t border-neutral-200 dark:border-white/10 transition-colors duration-300">
           {HIGHLIGHTS.map((highlight) => (
             <button
               key={highlight.id}
@@ -289,10 +289,10 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
               className="flex flex-col items-center gap-2 group flex-shrink-0 cursor-pointer"
             >
               <div className="relative p-[1px] rounded-full transition-transform duration-300 group-hover:scale-105">
-                <div className="absolute inset-0 bg-white/10 rounded-full"></div>
+                <div className="absolute inset-0 bg-neutral-200 dark:bg-white/10 rounded-full"></div>
                 {/* Elegant gold ring for highlight */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-brand-gold/40 to-brand-cream/30 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative p-[3px] bg-[#0A0A0A] rounded-full">
+                <div className="relative p-[3px] bg-white dark:bg-[#0A0A0A] rounded-full">
                   <img
                     src={highlight.coverUrl}
                     alt={highlight.title}
@@ -301,7 +301,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
                   />
                 </div>
               </div>
-              <span className="text-[10px] tracking-widest uppercase text-[#E5E5E5]/60 group-hover:text-brand-gold transition-colors duration-300">
+              <span className="text-[10px] tracking-widest uppercase text-neutral-500 dark:text-[#E5E5E5]/60 group-hover:text-brand-gold transition-colors duration-300">
                 {highlight.title}
               </span>
             </button>

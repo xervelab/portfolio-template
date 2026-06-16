@@ -10,7 +10,7 @@ interface GalleryGridProps {
 
 export default function GalleryGrid({ artworks, onArtworkClick }: GalleryGridProps) {
   return (
-    <div className="max-w-4xl mx-auto px-3 sm:px-6 py-6 sm:py-10 bg-[#0A0A0A]" id="gallery-grid-section">
+    <div className="max-w-4xl mx-auto px-3 sm:px-6 py-6 sm:py-10 bg-[#FAFAFA] dark:bg-[#0A0A0A] transition-colors duration-300" id="gallery-grid-section">
       <AnimatePresence mode="popLayout">
         {artworks.length === 0 ? (
           <motion.div
@@ -20,11 +20,11 @@ export default function GalleryGrid({ artworks, onArtworkClick }: GalleryGridPro
             className="flex flex-col items-center justify-center py-28 text-center"
             id="empty-gallery-state"
           >
-            <div className="p-5 border border-white/5 bg-[#111111] mb-5 rounded-full text-brand-gold/60">
+            <div className="p-5 border border-neutral-200 dark:border-white/5 bg-neutral-50 dark:bg-[#111111] mb-5 rounded-full text-brand-gold/60">
               <ShoppingBag className="w-8 h-8" />
             </div>
-            <p className="text-sm font-display uppercase tracking-widest text-[#E5E5E5]">No Masterpieces Found</p>
-            <p className="text-xs text-[#E5E5E5]/40 mt-2 font-sans max-w-xs leading-relaxed">
+            <p className="text-sm font-display uppercase tracking-widest text-neutral-900 dark:text-[#E5E5E5]">No Masterpieces Found</p>
+            <p className="text-xs text-neutral-500 dark:text-[#E5E5E5]/40 mt-2 font-sans max-w-xs leading-relaxed">
               This catalogue filter or section contains no items at this current epoch of studies.
             </p>
           </motion.div>
@@ -44,7 +44,7 @@ export default function GalleryGrid({ artworks, onArtworkClick }: GalleryGridPro
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                   onClick={() => onArtworkClick(art)}
-                  className="relative aspect-square group overflow-hidden bg-[#111111] cursor-pointer border border-white/10 hover:border-brand-gold/30 transition-all duration-500 shadow-xl"
+                  className="relative aspect-square group overflow-hidden bg-neutral-100 dark:bg-[#111111] cursor-pointer border border-neutral-200 dark:border-white/10 hover:border-brand-gold/30 transition-all duration-500 shadow-lg dark:shadow-xl"
                 >
                   {/* Masterpiece Image with ReferrerPolicy */}
                   <img
@@ -60,7 +60,7 @@ export default function GalleryGrid({ artworks, onArtworkClick }: GalleryGridPro
                   {/* Corner Badges (Top Right) */}
                   <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-10">
                     {art.isSold ? (
-                      <span className="bg-[#0A0A0A]/90 border border-white/15 text-[8px] font-sans font-light tracking-widest text-[#E5E5E5] px-2.5 py-1 uppercase backdrop-blur-xs">
+                      <span className="bg-white/90 dark:bg-[#0A0A0A]/90 border border-neutral-200 dark:border-white/15 text-[8px] font-sans font-light tracking-widest text-neutral-700 dark:text-[#E5E5E5] px-2.5 py-1 uppercase backdrop-blur-xs">
                         Sold
                       </span>
                     ) : art.price ? (
@@ -70,13 +70,13 @@ export default function GalleryGrid({ artworks, onArtworkClick }: GalleryGridPro
                     ) : null}
 
                     {art.featured && (
-                      <span className="bg-[#0A0A0A]/90 border border-brand-gold/30 text-brand-gold p-1.5 backdrop-blur-xs self-end" title="Selected Main Study">
+                      <span className="bg-white/90 dark:bg-[#0A0A0A]/90 border border-brand-gold/30 text-brand-gold p-1.5 backdrop-blur-xs self-end" title="Selected Main Study">
                         <Star className="w-2.5 h-2.5 fill-current" />
                       </span>
                     )}
 
                     {art.tags.length > 3 && (
-                      <div className="bg-[#0A0A0A]/85 border border-white/10 text-[#E5E5E5]/70 p-1.5 self-end" title="Multiple Studies">
+                      <div className="bg-white/85 dark:bg-[#0A0A0A]/85 border border-neutral-200 dark:border-white/10 text-neutral-600 dark:text-[#E5E5E5]/70 p-1.5 self-end" title="Multiple Studies">
                         <Layers className="w-2.5 h-2.5" />
                       </div>
                     )}

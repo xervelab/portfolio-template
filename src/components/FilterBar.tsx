@@ -9,7 +9,7 @@ interface FilterBarProps {
 
 export default function FilterBar({ activeFilter, onFilterChange, categories }: FilterBarProps) {
   return (
-    <div className="w-full py-8 border-b border-white/10 flex flex-col items-center justify-center bg-[#0A0A0A]" id="filter-bar-container">
+    <div className="w-full py-8 border-b border-neutral-200 dark:border-white/10 flex flex-col items-center justify-center bg-[#FAFAFA] dark:bg-[#0A0A0A] transition-colors duration-300" id="filter-bar-container">
       {/* Category Horizontal Scrolling Container */}
       <div className="w-full overflow-x-auto scrollbar-none flex justify-start sm:justify-center py-1">
         <div className="flex items-center gap-4 sm:gap-8 md:gap-12 px-3 sm:px-6">
@@ -23,7 +23,7 @@ export default function FilterBar({ activeFilter, onFilterChange, categories }: 
                 id={`filter-pill-${cat.name.toLowerCase().replace(/\s+/g, "-")}`}
               >
                 <div className="flex items-center gap-2">
-                  <span className={`${isActive ? "text-white" : "text-[#E5E5E5]/40 group-hover:text-brand-cream"} font-display transition-colors duration-300`}>
+                  <span className={`${isActive ? "text-neutral-900 dark:text-white" : "text-neutral-400 dark:text-[#E5E5E5]/40 group-hover:text-brand-gold dark:group-hover:text-brand-cream"} font-display transition-colors duration-300`}>
                     {cat.name}
                   </span>
 
@@ -31,7 +31,7 @@ export default function FilterBar({ activeFilter, onFilterChange, categories }: 
                     className={`text-[8px] font-mono tracking-normal leading-none font-light border rounded px-1.5 py-0.5 ${
                       isActive
                         ? "bg-brand-gold/10 text-brand-gold border-brand-gold/30"
-                        : "bg-transparent text-[#E5E5E5]/30 border-white/5 group-hover:border-[#E5E5E5]/20 group-hover:text-[#E5E5E5]/50 transition-colors"
+                        : "bg-transparent text-neutral-400 dark:text-[#E5E5E5]/30 border-neutral-200 dark:border-white/5 group-hover:border-neutral-400 dark:group-hover:border-[#E5E5E5]/20 group-hover:text-neutral-600 dark:group-hover:text-[#E5E5E5]/50 transition-colors"
                     }`}
                   >
                     {cat.count}

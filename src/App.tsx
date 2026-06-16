@@ -13,7 +13,11 @@ import { Sun, Moon, Sparkles, Image as ImageIcon, BookOpen, Calendar, Instagram,
 import { motion, AnimatePresence } from "motion/react";
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved) return saved === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
   const [activeTab, setActiveTab] = useState<"masterpieces" | "journal" | "exhibitions">("masterpieces");
 
   // Stateful collections to support live local mutations
@@ -32,9 +36,14 @@ export default function App() {
 
   // Set system dark mode preference as default on launch
   useEffect(() => {
-    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDarkMode(systemPrefersDark);
-  }, []);
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
 
   // Sync selected artwork whenever primary collection mutates (so comments/likes show up live in modal too)
   const syncSelectedArtwork = () => {
@@ -152,16 +161,16 @@ export default function App() {
     : artworks.filter((art) => art.category === activeFilter);
 
   return (
-    <div className="dark" id="app-root-container">
+    <div id="app-root-container">
       
-      {/* Background Wrapper of pure editorial dark */}
-      <div className="min-h-screen bg-[#0A0A0A] text-[#E5E5E5] flex flex-col font-sans">
+      {/* Background Wrapper */}
+      <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0A0A0A] text-neutral-900 dark:text-[#E5E5E5] flex flex-col font-sans transition-colors duration-300">
         
         {/* Nav Header */}
-        <nav className="sticky top-0 z-30 bg-[#0A0A0A]/90 backdrop-blur-md border-b border-white/10 px-4 sm:px-6 py-3 sm:py-4">
+        <nav className="sticky top-0 z-30 bg-[#FAFAFA]/90 dark:bg-[#0A0A0A]/90 backdrop-blur-md border-b border-neutral-200 dark:border-white/10 px-4 sm:px-6 py-3 sm:py-4 transition-colors duration-300">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="text-xs sm:text-sm md:text-base tracking-[0.15em] sm:tracking-[0.2em] font-light text-[#E5E5E5] uppercase font-display select-none truncate">
+              <span className="text-xs sm:text-sm md:text-base tracking-[0.15em] sm:tracking-[0.2em] font-light text-neutral-900 dark:text-[#E5E5E5] uppercase font-display select-none truncate">
                 Elena Rostova Studio
               </span>
             </div>
@@ -172,7 +181,7 @@ export default function App() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/40 hover:text-brand-gold transition-colors duration-300"
+                className="text-neutral-400 dark:text-white/40 hover:text-brand-gold transition-colors duration-300"
                 title="Follow Elena on Instagram"
               >
                 <Instagram className="w-4 h-4" />
@@ -181,8 +190,8 @@ export default function App() {
               {/* Theme toggle slider button */}
               <button
                 onClick={() => setDarkMode(!darkMode)}
-                className="p-1.5 border border-white/10 hover:border-brand-gold/40 text-white/40 hover:text-brand-cream transition-colors cursor-pointer rounded-none"
-                title={darkMode ? "Switch to Light Mode" : "Dark/Light Contrast Toggle"}
+                className="p-1.5 border border-neutral-200 dark:border-white/10 hover:border-brand-gold/40 text-neutral-500 dark:text-white/40 hover:text-brand-gold dark:hover:text-brand-cream transition-colors cursor-pointer rounded-none"
+                title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
                 id="theme-switcher-toggle"
               >
                 {darkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
@@ -202,14 +211,14 @@ export default function App() {
           />
 
           {/* Section 2: Interactive Tabs Row (Editorial Identity Layout) */}
-          <div className="max-w-4xl mx-auto px-3 sm:px-6 mt-4 border-t border-white/10 flex justify-center gap-4 sm:gap-10 md:gap-16 overflow-x-auto scrollbar-none">
+          <div className="max-w-4xl mx-auto px-3 sm:px-6 mt-4 border-t border-neutral-200 dark:border-white/10 flex justify-center gap-4 sm:gap-10 md:gap-16 overflow-x-auto scrollbar-none transition-colors duration-300">
             
             <button
               onClick={() => setActiveTab("masterpieces")}
               className={`py-3 sm:py-4 text-[9px] sm:text-[10px] uppercase tracking-[0.12em] sm:tracking-[0.2em] font-medium flex items-center gap-1.5 sm:gap-2 border-t border-transparent select-none cursor-pointer transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
                 activeTab === "masterpieces"
-                  ? "border-white text-white font-semibold scale-102"
-                  : "text-[#E5E5E5]/40 hover:text-[#E5E5E5]"
+                  ? "border-neutral-900 dark:border-white text-neutral-900 dark:text-white font-semibold scale-102"
+                  : "text-neutral-400 dark:text-[#E5E5E5]/40 hover:text-neutral-900 dark:hover:text-[#E5E5E5]"
               }`}
             >
               <Grid className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-gold/60" />
@@ -220,8 +229,8 @@ export default function App() {
               onClick={() => setActiveTab("journal")}
               className={`py-3 sm:py-4 text-[9px] sm:text-[10px] uppercase tracking-[0.12em] sm:tracking-[0.2em] font-medium flex items-center gap-1.5 sm:gap-2 border-t border-transparent select-none cursor-pointer transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
                 activeTab === "journal"
-                  ? "border-white text-white font-semibold scale-102"
-                  : "text-[#E5E5E5]/40 hover:text-[#E5E5E5]"
+                  ? "border-neutral-900 dark:border-white text-neutral-900 dark:text-white font-semibold scale-102"
+                  : "text-neutral-400 dark:text-[#E5E5E5]/40 hover:text-neutral-900 dark:hover:text-[#E5E5E5]"
               }`}
             >
               <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-gold/60" />
@@ -232,8 +241,8 @@ export default function App() {
               onClick={() => setActiveTab("exhibitions")}
               className={`py-3 sm:py-4 text-[9px] sm:text-[10px] uppercase tracking-[0.12em] sm:tracking-[0.2em] font-medium flex items-center gap-1.5 sm:gap-2 border-t border-transparent select-none cursor-pointer transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
                 activeTab === "exhibitions"
-                  ? "border-white text-white font-semibold scale-102"
-                  : "text-[#E5E5E5]/40 hover:text-[#E5E5E5]"
+                  ? "border-neutral-900 dark:border-white text-neutral-900 dark:text-white font-semibold scale-102"
+                  : "text-neutral-400 dark:text-[#E5E5E5]/40 hover:text-neutral-900 dark:hover:text-[#E5E5E5]"
               }`}
             >
               <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-gold/60" />
@@ -302,15 +311,15 @@ export default function App() {
         </main>
 
         {/* Styled footer bar */}
-        <footer className="py-8 sm:py-12 px-4 bg-[#060606] border-t border-white/5 mt-auto text-center space-y-3.5 select-none font-sans">
+        <footer className="py-8 sm:py-12 px-4 bg-neutral-100 dark:bg-[#060606] border-t border-neutral-200 dark:border-white/5 mt-auto text-center space-y-3.5 select-none font-sans transition-colors duration-300">
           <div className="flex items-center justify-center gap-2 text-brand-gold/60">
             <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-pulse" />
             <span className="text-[10px] uppercase tracking-[0.2em] font-medium">Elena Rostova Studio</span>
           </div>
-          <p className="text-[10px] text-zinc-500 font-serif italic tracking-wide">
+          <p className="text-[10px] text-neutral-500 dark:text-zinc-500 font-serif italic tracking-wide">
             © 2026 Elena Rostova. Co-represented globally by Galerie de l'Élysée, Paris.
           </p>
-          <p className="text-[9px] text-neutral-600 font-mono uppercase tracking-[0.18em]">
+          <p className="text-[9px] text-neutral-400 dark:text-neutral-600 font-mono uppercase tracking-[0.18em]">
             Powered by Antigravity and Gemini Models. All original studies protected.
           </p>
         </footer>
