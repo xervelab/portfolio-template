@@ -1,4 +1,5 @@
 import { Home, Search, PlusSquare, Heart, Mail, Palette } from "lucide-react";
+import { useSheetSingle, mapSite, DEFAULT_SITE, type SiteData } from "../hooks/useSheetData";
 
 interface NavbarProps {
   activePage: string;
@@ -6,6 +7,8 @@ interface NavbarProps {
 }
 
 export function Navbar({ activePage, onPageChange }: NavbarProps) {
+  const { data: site } = useSheetSingle<SiteData>("Site", mapSite, DEFAULT_SITE);
+
   const items = [
     { id: "home", icon: Home, label: "Home" },
     { id: "explore", icon: Search, label: "Explore" },
@@ -33,7 +36,7 @@ export function Navbar({ activePage, onPageChange }: NavbarProps) {
               fontStyle: "italic",
             }}
           >
-            maya.art
+            {site.brandSlug}
           </div>
         </div>
 

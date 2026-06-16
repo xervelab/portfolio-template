@@ -1,68 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Heart, MessageCircle, Bookmark, Share2, X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { useSheetData, useSheetSingle, mapGallery, mapProfile, DEFAULT_PROFILE, type GalleryItem, type ProfileData } from "../hooks/useSheetData";
 
-const SHEET_API_URL =
-  "https://sheetdb.io/api/v1/de7mxzfmbvmy7";
-
-interface Painting {
-  id: number;
-  url: string;
-  title: string;
-  medium: string;
-  year: number;
-  likes: number;
-  comments: number;
-  caption: string;
-}
-
-function usePaintings() {
-  const [paintings, setPaintings] = useState<Painting[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchPaintings() {
-      try {
-        const res = await fetch(SHEET_API_URL, { redirect: "follow" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-
-        // Support both array directly or { data: [...] } wrapper
-        const rows: any[] = Array.isArray(data) ? data : data.data ?? data.rows ?? [];
-
-        if (rows.length === 0) throw new Error("Empty response");
-
-        const mapped: Painting[] = rows.map((row: any, idx: number) => ({
-          id: Number(row.ID ?? row.id) || idx + 1,
-          url: row["Image URL"] ?? row.url ?? row.image ?? row.imageUrl ?? "",
-          title: row.Title ?? row.title ?? row.name ?? "Untitled",
-          medium: row.Medium ?? row.medium ?? "",
-          year: Number(row.Year ?? row.year) || new Date().getFullYear(),
-          likes: Number(String(row.Likes ?? row.likes ?? 0).replace(/,/g, "")) || 0,
-          comments: Number(String(row.Comments ?? row.comments ?? 0).replace(/,/g, "")) || 0,
-          caption: row.Caption ?? row.caption ?? "",
-        }));
-
-        if (!cancelled) {
-          setPaintings(mapped);
-          setLoading(false);
-        }
-      } catch {
-        if (!cancelled) {
-          setPaintings([]);
-          setLoading(false);
-        }
-      }
-    }
-
-    fetchPaintings();
-    return () => { cancelled = true; };
-  }, []);
-
-  return { paintings, loading };
-}
+type Painting = GalleryItem;
 
 function formatCount(n: number) {
   return n >= 1000 ? (n / 1000).toFixed(1) + "K" : String(n);
@@ -70,6 +11,7 @@ function formatCount(n: number) {
 
 interface ModalProps {
   painting: Painting;
+  profile: ProfileData;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
@@ -77,7 +19,7 @@ interface ModalProps {
   hasNext: boolean;
 }
 
-function PaintingModal({ painting, onClose, onPrev, onNext, hasPrev, hasNext }: ModalProps) {
+function PaintingModal({ painting, profile, onClose, onPrev, onNext, hasPrev, hasNext }: ModalProps) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [comment, setComment] = useState("");
@@ -142,14 +84,14 @@ function PaintingModal({ painting, onClose, onPrev, onNext, hasPrev, hasNext }: 
           <div className="flex items-center gap-3 p-4 border-b" style={{ borderColor: "var(--border)" }}>
             <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
               <img
-                src="https://images.unsplash.com/photo-1551180452-aea351b23949?w=80&h=80&fit=crop&auto=format"
-                alt="maya.chen.art"
+                src={profile.avatarUrl}
+                alt={profile.username}
                 className="w-full h-full object-cover"
               />
             </div>
             <div>
               <p style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: "14px", color: "var(--foreground)" }}>
-                maya.chen.art
+                {profile.username}
               </p>
               <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "12px", color: "var(--muted-foreground)" }}>
                 {painting.medium}
@@ -162,14 +104,14 @@ function PaintingModal({ painting, onClose, onPrev, onNext, hasPrev, hasNext }: 
             <div className="flex gap-3 mb-4">
               <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
                 <img
-                  src="https://images.unsplash.com/photo-1551180452-aea351b23949?w=80&h=80&fit=crop&auto=format"
-                  alt="maya.chen.art"
+                  src={profile.avatarUrl}
+                  alt={profile.username}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
                 <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: "14px", color: "var(--foreground)" }}>
-                  maya.chen.art{" "}
+                  {profile.username}{" "}
                 </span>
                 <span style={{ fontFamily: "'Inter', sans-serif", fontSize: "14px", color: "var(--foreground)" }}>
                   {painting.caption}
@@ -254,7 +196,8 @@ function PaintingModal({ painting, onClose, onPrev, onNext, hasPrev, hasNext }: 
 }
 
 export function Gallery() {
-  const { paintings, loading } = usePaintings();
+  const { data: paintings, loading } = useSheetData<Painting>("Gallery", mapGallery, []);
+  const { data: profile } = useSheetSingle<ProfileData>("Profile", mapProfile, DEFAULT_PROFILE);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
@@ -327,6 +270,7 @@ export function Gallery() {
         {selectedIdx !== null && (
           <PaintingModal
             painting={paintings[selectedIdx]}
+            profile={profile}
             onClose={() => setSelectedIdx(null)}
             onPrev={() => setSelectedIdx((i) => (i !== null ? i - 1 : null))}
             onNext={() => setSelectedIdx((i) => (i !== null ? i + 1 : null))}

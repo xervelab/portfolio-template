@@ -6,6 +6,7 @@ import { Gallery } from "./components/Gallery";
 import { ContactForm } from "./components/ContactForm";
 import { SocialLinks } from "./components/SocialLinks";
 import { AnimatePresence, motion } from "motion/react";
+import { useSheetSingle, mapSite, DEFAULT_SITE, type SiteData } from "./hooks/useSheetData";
 
 type Page = "home" | "explore" | "contact" | "notifications";
 type Tab = "posts" | "reels" | "saved" | "tagged";
@@ -13,6 +14,7 @@ type Tab = "posts" | "reels" | "saved" | "tagged";
 export default function App() {
   const [page, setPage] = useState<Page>("home");
   const [activeTab, setActiveTab] = useState<Tab>("posts");
+  const { data: site } = useSheetSingle<SiteData>("Site", mapSite, DEFAULT_SITE);
 
   return (
     <div className="noise-overlay" style={{ background: "var(--background)", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
@@ -89,7 +91,7 @@ export default function App() {
           {/* Artistic signature */}
           <div className="signature-float">
             <span className="gradient-text" style={{ fontFamily: "'DM Serif Display', serif", fontSize: "24px", fontStyle: "italic" }}>
-              Maya Chen
+              {site.brandName}
             </span>
           </div>
           {/* Decorative separator */}
@@ -99,10 +101,10 @@ export default function App() {
             <div className="w-12 h-px" style={{ background: "linear-gradient(90deg, var(--border), transparent)" }} />
           </div>
           <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", color: "var(--muted-foreground)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            © 2024 Maya Chen · All Rights Reserved · New York, NY
+            {site.copyright}
           </p>
           <p style={{ fontFamily: "'DM Serif Display', serif", fontSize: "12px", color: "var(--muted-foreground)", fontStyle: "italic", opacity: 0.6 }}>
-            "Art is not what you see, but what you make others see."
+            "{site.footerQuote}"
           </p>
         </div>
       </footer>
