@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-display: "Cinzel", Georgia, serif;
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-brand-gold: #C5A059;
+  --color-brand-cream: #F2E5D5;
+  --color-editorial-dark: #0A0A0A;
+  --color-editorial-card: #111111;
+  --color-editorial-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Custom global overrides to align with Editorial Minimalist Aesthetic */
+body {
+  background-color: #0A0A0A;
+  color: #E5E5E5;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom minimalist scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(197, 160, 89, 0.25);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 160, 89, 0.5);
+}
+
+/* Fluid animations utility */
+.editorial-fade {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}

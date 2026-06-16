@@ -1,0 +1,6 @@
+{
+  "name": "Aesthetic Artist Portfolio",
+  "description": "An Instagram-inspired personal grid portfolio for a contemporary artist, showcasing artwork with high-fidelity modals, smooth filtering animations, and interactive studio details.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
