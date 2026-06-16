@@ -1,15 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Send, MapPin, Mail, Sparkles, Check, ArrowRight, BookOpen, Clock } from 'lucide-react';
-import { ARTWORKS } from '../data/artworks';
-import { Inquiry } from '../types';
+import { useSheetSingle, mapContact, DEFAULT_CONTACT, type ContactData, type ArtworkData, type SiteData } from '../hooks/useSheetData';
 
-interface ContactFormProps {
-  selectedArtworkTitle: string | null;
-  clearSelectedArtwork: () => void;
+interface Inquiry {
+  id: string;
+  senderName: string;
+  senderEmail: string;
+  subject: string;
+  artworkId?: string;
+  messageType: string;
+  message: string;
+  date: string;
 }
 
-export default function ContactForm({ selectedArtworkTitle, clearSelectedArtwork }: ContactFormProps) {
+interface ContactFormProps {
+  artworks: ArtworkData[];
+  selectedArtworkTitle: string | null;
+  clearSelectedArtwork: () => void;
+  site: SiteData;
+}
+
+export default function ContactForm({ artworks, selectedArtworkTitle, clearSelectedArtwork, site }: ContactFormProps) {
+  const { data: contactInfo } = useSheetSingle<ContactData>("Contact", mapContact, DEFAULT_CONTACT, "Address");
   const [formData, setFormData] = useState({
     senderName: '',
     senderEmail: '',
@@ -26,7 +39,7 @@ export default function ContactForm({ selectedArtworkTitle, clearSelectedArtwork
   // Sync with selected artwork from curator prompt
   useEffect(() => {
     if (selectedArtworkTitle) {
-      const art = ARTWORKS.find(a => a.title === selectedArtworkTitle);
+      const art = artworks.find(a => a.title === selectedArtworkTitle);
       setFormData(prev => ({
         ...prev,
         messageType: 'Acquisition',
@@ -34,7 +47,7 @@ export default function ContactForm({ selectedArtworkTitle, clearSelectedArtwork
         subject: `Acquisition Exploration: ${selectedArtworkTitle}`
       }));
     }
-  }, [selectedArtworkTitle]);
+  }, [selectedArtworkTitle, artworks]);
 
   // Load existing inquiries from localStorage for realistic offline persistence
   useEffect(() => {
@@ -113,54 +126,62 @@ export default function ContactForm({ selectedArtworkTitle, clearSelectedArtwork
           {/* Left Block: Studio Desk details, office hours and correspondence info */}
           <div className="lg:col-span-5 space-y-8">
             <div className="space-y-3">
-              <span className="font-mono text-xs text-[#C5A47E] tracking-widest uppercase block">CORRESPONDENCE DESK</span>
+              <span className="font-mono text-xs text-[#C5A47E] tracking-widest uppercase block">{site.contactLabel || 'CORRESPONDENCE DESK'}</span>
               <h2 className="text-3xl md:text-4xl font-sans font-extralight tracking-tight text-white">
-                Initiate Dialogue
+                {site.contactTitle || 'Initiate Dialogue'}
               </h2>
               <div className="w-16 h-[1px] bg-[#C5A47E]" />
             </div>
 
             <p className="text-white/70 leading-relaxed font-sans font-light">
-              Acquisition files, commissions, and private workshop visits are addressed personally. Let us know how we can curate your workspace.
+              {site.contactDescription || 'Get in touch to discuss acquisitions, commissions, or visits.'}
             </p>
 
             <div className="space-y-5 pt-4">
-              <div className="flex gap-4 items-start">
-                <div className="mt-1 p-2 bg-white/5 border border-white/10 text-[#C5A47E] rounded-xs">
-                  <MapPin className="w-4 h-4" />
+              {contactInfo.address && (
+                <div className="flex gap-4 items-start">
+                  <div className="mt-1 p-2 bg-white/5 border border-white/10 text-[#C5A47E] rounded-xs">
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-mono text-xs uppercase tracking-wider text-white font-medium mb-1">Studio Address</h4>
+                    <p className="text-xs text-neutral-400 font-sans leading-relaxed">
+                      {contactInfo.address}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-mono text-xs uppercase tracking-wider text-white font-medium mb-1">C. Moreau Studio Residence</h4>
-                  <p className="text-xs text-neutral-400 font-sans leading-relaxed">
-                    14 Rue Des Capucins, Croix-Rousse, 69001 Lyon, France
-                  </p>
-                </div>
-              </div>
+              )}
 
-              <div className="flex gap-4 items-start">
-                <div className="mt-1 p-2 bg-white/5 border border-white/10 text-[#C5A47E] rounded-xs">
-                  <Mail className="w-4 h-4" />
+              {contactInfo.email && (
+                <div className="flex gap-4 items-start">
+                  <div className="mt-1 p-2 bg-white/5 border border-white/10 text-[#C5A47E] rounded-xs">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-mono text-xs uppercase tracking-wider text-white font-medium mb-1">Email</h4>
+                    <p className="text-xs text-neutral-400 font-sans leading-relaxed">
+                      {contactInfo.email}
+                    </p>
+                    {contactInfo.replyTimeframe && (
+                      <p className="text-[10px] text-[#C5A47E] font-mono uppercase mt-1">Reply timeframe: {contactInfo.replyTimeframe}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-mono text-xs uppercase tracking-wider text-white font-medium mb-1">Direct Courier Email</h4>
-                  <p className="text-xs text-neutral-400 font-sans leading-relaxed">
-                    acquisitions@claramoreau.studio
-                  </p>
-                  <p className="text-[10px] text-[#C5A47E] font-mono uppercase mt-1">Reply timeframe: 48 Hours</p>
-                </div>
-              </div>
+              )}
 
-              <div className="flex gap-4 items-start">
-                <div className="mt-1 p-2 bg-white/5 border border-white/10 text-[#C5A47E] rounded-xs">
-                  <Clock className="w-4 h-4" />
+              {contactInfo.hours && (
+                <div className="flex gap-4 items-start">
+                  <div className="mt-1 p-2 bg-white/5 border border-white/10 text-[#C5A47E] rounded-xs">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-mono text-xs uppercase tracking-wider text-white font-medium mb-1">Hours</h4>
+                    <p className="text-xs text-neutral-400 font-sans leading-relaxed">
+                      {contactInfo.hours}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-mono text-xs uppercase tracking-wider text-white font-medium mb-1">Atelier Hours by Appointment</h4>
-                  <p className="text-xs text-neutral-400 font-sans leading-relaxed">
-                    Thursday &mdash; Saturday: 11:00 am &mdash; 6:00 pm
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Simulated Ledger of Sent Messages */}
@@ -182,7 +203,7 @@ export default function ContactForm({ selectedArtworkTitle, clearSelectedArtwork
 
                 <div className="space-y-3 max-h-56 overflow-y-auto pr-2 custom-scrollbar">
                   {transmittedMessages.map(inq => {
-                    const artContext = ARTWORKS.find(a => a.id === inq.artworkId);
+                    const artContext = artworks.find(a => a.id === inq.artworkId);
                     return (
                       <motion.div
                         key={inq.id}
@@ -303,7 +324,7 @@ export default function ContactForm({ selectedArtworkTitle, clearSelectedArtwork
                     className="w-full bg-[#0B0B0B] border border-white/10 px-4 py-3 text-xs text-white focus:outline-none focus:border-[#C5A47E] focus:bg-[#141414] transition-all rounded-xs font-mono"
                   >
                     <option value="" className="bg-[#0D0D0D] text-white">-- No Direct Canvas Reference --</option>
-                    {ARTWORKS.map(art => (
+                    {artworks.map(art => (
                       <option key={art.id} value={art.id} className="bg-[#0D0D0D] text-white">
                         {art.title} ({art.category} &mdash; {art.status})
                       </option>

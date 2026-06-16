@@ -9,12 +9,24 @@ import Exhibitions from './components/Exhibitions';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
 
-import { ARTWORKS } from './data/artworks';
+import { useSheetSingle, useSheetData, mapProfile, mapSite, mapArtworks, DEFAULT_PROFILE, DEFAULT_SITE, SAMPLE_ARTWORKS, type ProfileData, type SiteData, type ArtworkData } from './hooks/useSheetData';
 
 export default function App() {
   const [selectedArtworkTitle, setSelectedArtworkTitle] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Fetch data from Google Sheets
+  const { data: profile, loading: profileLoading } = useSheetSingle<ProfileData>("Profile", mapProfile, DEFAULT_PROFILE, "Name");
+  const { data: site, loading: siteLoading } = useSheetSingle<SiteData>("Site", mapSite, DEFAULT_SITE, "Brand Name");
+  const { data: artworks, loading: artworksLoading } = useSheetData<ArtworkData>("Artworks", mapArtworks, SAMPLE_ARTWORKS, "Title");
+
+  // Minimum 3 second loading
+  const [minLoadingDone, setMinLoadingDone] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setMinLoadingDone(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Monitor Scroll for Glassmorphism Navigation Background
   useEffect(() => {
@@ -24,6 +36,50 @@ export default function App() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const isInitialLoading = profileLoading || siteLoading || !minLoadingDone;
+
+  // Loading screen
+  if (isInitialLoading) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex flex-col items-center gap-6"
+        >
+          <div className="relative w-16 h-16">
+            <div
+              className="w-16 h-16 rounded-full border-2 border-transparent"
+              style={{ borderTopColor: '#C5A47E', borderRightColor: 'rgba(197,164,126,0.3)', animation: 'spin 1.5s linear infinite' }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-[#C5A47E] animate-pulse" />
+            </div>
+          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="flex flex-col items-center gap-2"
+          >
+            <p className="text-[10px] uppercase tracking-[0.25em] text-white/40 font-mono">
+              Loading portfolio
+            </p>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 0.5, duration: 0.8, ease: "easeInOut" }}
+              className="w-24 h-[1px] origin-center"
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(197,164,126,0.6), transparent)' }}
+            />
+          </motion.div>
+        </motion.div>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   // Scroll function pointing clients dynamically to form desk
   const handleInquireAboutArtwork = (artworkTitle: string) => {
@@ -81,10 +137,10 @@ export default function App() {
             className="flex flex-col group"
           >
             <span className="font-serif text-lg md:text-xl tracking-normal text-white group-hover:text-[#C5A47E] transition-colors duration-300">
-              CLARA MOREAU
+              {site.brandName || 'PORTFOLIO'}
             </span>
             <span className="font-mono text-[7px] tracking-widest text-[#C5A47E] uppercase mt-0.5">
-              Atelier de Peinture
+              {site.brandSubtitle}
             </span>
           </a>
 
@@ -182,18 +238,18 @@ export default function App() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4.5 h-4.5 text-[#C5A47E]" />
-                <span className="font-mono text-xs text-[#C5A47E] tracking-widest uppercase">EXHIBITION &mdash; SERIES 2026</span>
+                <span className="font-mono text-xs text-[#C5A47E] tracking-widest uppercase">{site.heroTag || 'EXHIBITION'}</span>
               </div>
               
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-sans font-extralight tracking-tight text-white leading-none">
-                Tactility of <span className="font-serif italic font-light block mt-2 text-[#C5A47E]">Atmosphere</span>
+                {site.heroTitle || 'Welcome'} <span className="font-serif italic font-light block mt-2 text-[#C5A47E]">{site.heroSubtitle}</span>
               </h1>
               
               <div className="w-20 h-[1px] bg-[#C5A47E] mt-6" />
             </div>
 
             <p className="text-sm md:text-base text-neutral-400 leading-relaxed font-sans font-light max-w-lg">
-              A collection of raw plaster, gold leaf inclusions, and heavy earth oil canvases tracking natural twilight shifts. Exploring the physical friction of sight and geological touch.
+              {site.heroDescription}
             </p>
 
             {/* Micro Call to actions */}
@@ -203,14 +259,14 @@ export default function App() {
                 onClick={() => handleNavLinkClick('#gallery')}
                 className="px-6 py-3 bg-[#C5A47E] text-black hover:bg-white font-medium transition-all duration-300 rounded-sm shadow-md cursor-pointer"
               >
-                View Catalog
+                {site.heroCta1 || 'View Catalog'}
               </button>
               <button
                 id="hero-profile-read"
                 onClick={() => handleNavLinkClick('#artist-profile')}
                 className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-all duration-300 rounded-sm cursor-pointer"
               >
-                Read Biography
+                {site.heroCta2 || 'Read Biography'}
               </button>
             </div>
           </div>
@@ -222,22 +278,26 @@ export default function App() {
               
               {/* Painting Canvas */}
               <div className="w-full h-full bg-[#1A1A1A] overflow-hidden relative">
-                <img
-                  src={ARTWORKS[0].imageUrl}
-                  alt="Vesper Whisper Close-Up"
-                  className="w-full h-full object-cover grayscale-[15%] group-hover:grayscale-0 group-hover:scale-[1.03] transition-all duration-1000 ease-out"
-                  referrerPolicy="no-referrer"
-                />
+                {artworks[0]?.imageUrl && (
+                  <img
+                    src={artworks[0].imageUrl}
+                    alt={artworks[0]?.title || 'Featured artwork'}
+                    className="w-full h-full object-cover grayscale-[15%] group-hover:grayscale-0 group-hover:scale-[1.03] transition-all duration-1000 ease-out"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
                 
                 {/* Visual gloss overlay */}
                 <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-transparent via-white/5 to-white/10" />
               </div>
 
               {/* Floating micro info placement */}
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-[#0D0D0D]/95 px-4 py-2 border border-white/10 shadow-md rounded-[1px] flex flex-col items-center pointer-events-none text-center">
-                <span className="font-serif text-xs text-white">{String(ARTWORKS[0].title).toUpperCase()}</span>
-                <span className="font-mono text-[8px] uppercase tracking-widest text-[#C5A47E] mt-1">Belgian Linen &mdash; {ARTWORKS[0].dimensions}</span>
-              </div>
+              {artworks[0] && (
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-[#0D0D0D]/95 px-4 py-2 border border-white/10 shadow-md rounded-[1px] flex flex-col items-center pointer-events-none text-center">
+                  <span className="font-serif text-xs text-white">{artworks[0].title.toUpperCase()}</span>
+                  <span className="font-mono text-[8px] uppercase tracking-widest text-[#C5A47E] mt-1">{artworks[0].medium} &mdash; {artworks[0].dimensions}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -260,18 +320,20 @@ export default function App() {
       {/* Section Array */}
       <StudioIntro />
       
-      <Gallery onInquireAboutArtwork={handleInquireAboutArtwork} />
+      <Gallery artworks={artworks} onInquireAboutArtwork={handleInquireAboutArtwork} site={site} />
       
-      <StudioSim />
+      <StudioSim artworks={artworks} site={site} />
       
-      <Exhibitions />
+      <Exhibitions site={site} />
       
       <ContactForm 
+        artworks={artworks}
         selectedArtworkTitle={selectedArtworkTitle} 
-        clearSelectedArtwork={clearSelectedArtwork} 
+        clearSelectedArtwork={clearSelectedArtwork}
+        site={site}
       />
       
-      <Footer />
+      <Footer site={site} />
 
     </div>
   );

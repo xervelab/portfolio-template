@@ -1,26 +1,33 @@
 import { Calendar, MapPin, Grid, Layers } from 'lucide-react';
-import { EXHIBITIONS } from '../data/artworks';
+import { useSheetData, mapExhibitions, SAMPLE_EXHIBITIONS, type ExhibitionData } from '../hooks/useSheetData';
+import { type SiteData } from '../hooks/useSheetData';
 
-export default function Exhibitions() {
+interface ExhibitionsProps {
+  site: SiteData;
+}
+
+export default function Exhibitions({ site }: ExhibitionsProps) {
+  const { data: exhibitions } = useSheetData<ExhibitionData>("Exhibitions", mapExhibitions, SAMPLE_EXHIBITIONS, "Venue");
+
   return (
     <section id="exhibitions" className="py-24 px-6 md:px-12 bg-[#0A0A0A] border-b border-white/5">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Block Section */}
         <div className="space-y-4 mb-16 text-center max-w-xl mx-auto">
-          <span className="font-mono text-xs text-[#C5A47E] tracking-widest uppercase block">WORLDWIDE EXHIBITS</span>
+          <span className="font-mono text-xs text-[#C5A47E] tracking-widest uppercase block">{site.exhibitionsLabel || 'WORLDWIDE EXHIBITS'}</span>
           <h2 className="text-3xl md:text-4xl font-sans font-extralight tracking-tight text-white font-light">
-            Exhibition Calendar
+            {site.exhibitionsTitle || 'Exhibition Calendar'}
           </h2>
           <div className="w-16 h-[1px] bg-[#C5A47E] mx-auto" />
           <p className="text-xs text-neutral-450 font-sans font-light leading-relaxed">
-            Curated shows displaying experimental canvases and organic watercolor sediment structures to the public. Contact the hosting galleries below for primary bidding.
+            {site.exhibitionsDescription}
           </p>
         </div>
 
         {/* Chronological List Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {EXHIBITIONS.map(ex => (
+          {exhibitions.map(ex => (
             <div
               key={ex.id}
               id={`exhibition-card-${ex.id}`}
@@ -70,16 +77,16 @@ export default function Exhibitions() {
         </div>
 
         {/* Fine Art representation notice info-badge */}
-        <div className="mt-12 bg-[#121212] border border-white/10 p-6 max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 rounded-sm text-xs">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#C5A47E] rounded-full text-black shrink-0">
-              <Layers className="w-4 h-4" />
+        {site.exhibitionsRepresentation && (
+          <div className="mt-12 bg-[#121212] border border-white/10 p-6 max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 rounded-sm text-xs">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[#C5A47E] rounded-full text-black shrink-0">
+                <Layers className="w-4 h-4" />
+              </div>
+              <p className="text-white/70 font-sans leading-relaxed text-center md:text-left" dangerouslySetInnerHTML={{ __html: site.exhibitionsRepresentation }} />
             </div>
-            <p className="text-white/70 font-sans leading-relaxed text-center md:text-left">
-              Clara Moreau is represented exclusively in North America by <strong className="text-white">The Broadhurst Gallery (NY)</strong> and in Europe by <strong className="text-white">Espace Contemporain (Paris)</strong>. For primary acquisitions, please query the curators directly or initiate a dialogue.
-            </p>
           </div>
-        </div>
+        )}
 
       </div>
     </section>

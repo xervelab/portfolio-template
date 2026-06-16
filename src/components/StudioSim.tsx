@@ -1,14 +1,22 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sun, Sparkles, Moon, Lightbulb, Info } from 'lucide-react';
-import { ARTWORKS } from '../data/artworks';
-import { LightingMode } from '../types';
+import { type ArtworkData, type SiteData } from '../hooks/useSheetData';
 
-export default function StudioSim() {
+type LightingMode = 'gallery' | 'daylight' | 'golden' | 'spotlight';
+
+interface StudioSimProps {
+  artworks: ArtworkData[];
+  site: SiteData;
+}
+
+export default function StudioSim({ artworks, site }: StudioSimProps) {
   const [activeMode, setActiveMode] = useState<LightingMode>('gallery');
-  const [displayArtId, setDisplayArtId] = useState<string>(ARTWORKS[0].id);
+  const [displayArtId, setDisplayArtId] = useState<string>(artworks[0]?.id || '');
 
-  const selectedArt = ARTWORKS.find(a => a.id === displayArtId) || ARTWORKS[0];
+  const selectedArt = artworks.find(a => a.id === displayArtId) || artworks[0];
+
+  if (!selectedArt || artworks.length === 0) return null;
 
   const lightingProfiles = [
     {
@@ -67,15 +75,15 @@ export default function StudioSim() {
           {/* Left Text Detail Column */}
           <div className="lg:col-span-5 space-y-8">
             <div className="space-y-3">
-              <span className="font-mono text-xs text-[#C5A47E] tracking-widest uppercase">INTERACTIVE LIGHTROOM</span>
+              <span className="font-mono text-xs text-[#C5A47E] tracking-widest uppercase">{site.lightroomLabel || 'INTERACTIVE LIGHTROOM'}</span>
               <h2 className="text-3xl md:text-4xl font-sans font-extralight tracking-tight text-white">
-                Chiaroscuro Simulator
+                {site.lightroomTitle || 'Chiaroscuro Simulator'}
               </h2>
               <div className="w-16 h-[1px] bg-[#C5A47E]" />
             </div>
 
             <p className="text-white/70 leading-relaxed font-sans font-light">
-              Paintings are alive, shifting and reacting alongside local environments. Clara’s artworks are built with dozens of physical layers of minerals, plasters, and gold-foils that refract light selectively.
+              {site.lightroomDescription || 'Select an artwork below, then choose different environmental lighting profiles to see how the painting adapts.'}
             </p>
 
             <p className="text-neutral-400 text-sm italic font-sans font-light">
@@ -86,7 +94,7 @@ export default function StudioSim() {
             <div className="space-y-3">
               <h4 className="font-mono text-xs uppercase text-[#C5A47E] tracking-wider">Select Canvas to Frame</h4>
               <div className="flex flex-wrap gap-2">
-                {ARTWORKS.slice(0, 4).map(art => (
+                {artworks.slice(0, 4).map(art => (
                   <button
                     key={art.id}
                     id={`art-toggle-${art.id}`}

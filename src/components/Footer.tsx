@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { Instagram, Mail, Globe, Compass, ExternalLink, ArrowRight, Check } from 'lucide-react';
+import { useSheetData, mapSocials, SAMPLE_SOCIALS, type SocialData, type SiteData } from '../hooks/useSheetData';
 
-export default function Footer() {
+interface FooterProps {
+  site: SiteData;
+}
+
+export default function Footer({ site }: FooterProps) {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribeStatus, setSubscribeStatus] = useState(false);
+  const { data: socials } = useSheetData<SocialData>("Socials", mapSocials, SAMPLE_SOCIALS, "Handle");
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newsletterEmail) return;
 
-    // Fast mock studio list subscribing
     setTimeout(() => {
       setSubscribeStatus(true);
       setNewsletterEmail('');
@@ -17,32 +22,15 @@ export default function Footer() {
     }, 500);
   };
 
-  const socialLinks = [
-    {
-      name: 'Instagram',
-      url: 'https://instagram.com/clara_moreau_studio_mock',
-      icon: Instagram,
-      handle: '@clara.moreau.studio'
-    },
-    {
-      name: 'Artsy Profile',
-      url: 'https://artsy.net/artist/clara-moreau-mock',
-      icon: Compass,
-      handle: 'artsy.net/clara-moreau'
-    },
-    {
-      name: 'Private Courier',
-      url: 'mailto:acquisitions@claramoreau.studio',
-      icon: Mail,
-      handle: 'acquisitions@claramoreau.studio'
-    },
-    {
-      name: 'Atelier Archives',
-      url: '#gallery',
-      icon: Globe,
-      handle: 'claramoreau.studio'
+  const getIcon = (iconName: string) => {
+    switch (iconName.toLowerCase()) {
+      case 'instagram': return Instagram;
+      case 'mail': return Mail;
+      case 'globe': return Globe;
+      case 'compass': return Compass;
+      default: return ExternalLink;
     }
-  ];
+  };
 
   return (
     <footer className="bg-[#090909] text-[#FAF8F5] border-t border-white/5">
@@ -53,27 +41,20 @@ export default function Footer() {
         {/* Left Column: Brand Statement */}
         <div className="lg:col-span-4 space-y-6 animate-fade-in">
           <div className="space-y-2">
-            <span className="font-serif text-2xl tracking-normal text-white uppercase font-light">CLARA MOREAU</span>
-            <span className="block font-mono text-[9px] tracking-widest text-[#C5A47E] uppercase font-semibold">ATELIER DE PEINTURE &mdash; EST. 2018</span>
-          </div>
-          <p className="text-xs text-neutral-400 leading-relaxed font-sans font-light max-w-sm">
-            Investigating depth, atmospheric volume, and geological remnants using hand-ground mineral pigments, raw Belgian linens, and iron oxidation.
-          </p>
-          <div className="text-[10px] font-mono text-white/30">
-            Lyon &bull; New York &bull; Paris
+            <span className="font-serif text-2xl tracking-normal text-white uppercase font-light">{site.brandName}</span>
+            <span className="block font-mono text-[9px] tracking-widest text-[#C5A47E] uppercase font-semibold">{site.brandSubtitle}</span>
           </div>
         </div>
 
-        {/* Center-Left Column: Social Portals */}
+        {/* Center Column: Social Portals */}
         <div className="lg:col-span-4 space-y-4">
-          <h4 className="font-mono text-xs uppercase text-[#C5A47E] tracking-widest font-semibold tracking-wide">Digital Exposures</h4>
+          <h4 className="font-mono text-xs uppercase text-[#C5A47E] tracking-widest font-semibold">Links</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {socialLinks.map(link => {
-              const Icon = link.icon;
+            {socials.map(link => {
+              const Icon = getIcon(link.icon);
               return (
                 <a
                   key={link.name}
-                  id={`social-link-${link.name.toLowerCase().replace(' ', '-')}`}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -92,11 +73,11 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Right Column: Newsletter Catalog Subscription */}
+        {/* Right Column: Newsletter */}
         <div className="lg:col-span-4 space-y-4">
-          <h4 className="font-mono text-xs uppercase text-[#C5A47E] tracking-widest font-semibold">Exclusive Vernissage Catalog</h4>
+          <h4 className="font-mono text-xs uppercase text-[#C5A47E] tracking-widest font-semibold">Newsletter</h4>
           <p className="text-xs text-neutral-400 leading-relaxed font-sans font-light">
-            Subscribe to receive priority digital catalogs, upcoming exhibition coordinates, and private studio collection releases before they open to general bidding.
+            Subscribe to receive updates on new works, exhibitions, and releases.
           </p>
 
           <form onSubmit={handleSubscribe} className="space-y-3 pt-2">
@@ -107,7 +88,7 @@ export default function Footer() {
                 required
                 value={newsletterEmail}
                 onChange={e => setNewsletterEmail(e.target.value)}
-                placeholder="E.g., collector@private.com"
+                placeholder="your@email.com"
                 className="w-full bg-[#0B0B0B] border border-white/10 text-white placeholder-white/30 px-4 py-3 text-xs focus:outline-none focus:border-[#C5A47E] rounded-sm transition-colors"
               />
               <button
@@ -119,11 +100,10 @@ export default function Footer() {
               </button>
             </div>
 
-            {/* Newsletter Subscription Feedback Banner */}
             {subscribeStatus && (
               <div className="text-[10px] text-emerald-400 font-mono tracking-wide flex items-center gap-2 bg-emerald-950/40 p-2.5 border border-emerald-900/50 rounded-xs">
                 <Check className="w-3.5 h-3.5 shrink-0" />
-                <span>Added to Vernissage Priority Access List. Welcome.</span>
+                <span>Subscribed successfully!</span>
               </div>
             )}
           </form>
@@ -134,13 +114,13 @@ export default function Footer() {
       {/* Bottom Legal Section */}
       <div className="border-t border-white/5 bg-black/30 py-8 px-6 text-center">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-neutral-500 font-mono">
-          <span>&copy; {new Date().getFullYear()} Clara Moreau Studio. All Rights Reserved.</span>
+          <span>{site.copyright || `© ${new Date().getFullYear()} All Rights Reserved.`}</span>
           <div className="flex gap-4">
-            <a href="#artist-profile" className="hover:text-[#C5A47E] transition-colors uppercase text-[9px] tracking-widest">The Profile</a>
+            <a href="#artist-profile" className="hover:text-[#C5A47E] transition-colors uppercase text-[9px] tracking-widest">Profile</a>
             <span>&bull;</span>
-            <a href="#gallery" className="hover:text-[#C5A47E] transition-colors uppercase text-[9px] tracking-widest">Curated Works</a>
+            <a href="#gallery" className="hover:text-[#C5A47E] transition-colors uppercase text-[9px] tracking-widest">Works</a>
             <span>&bull;</span>
-            <a href="#contact-portal" className="hover:text-[#C5A47E] transition-colors uppercase text-[9px] tracking-widest">Correspondence Desk</a>
+            <a href="#contact-portal" className="hover:text-[#C5A47E] transition-colors uppercase text-[9px] tracking-widest">Contact</a>
           </div>
         </div>
       </div>
