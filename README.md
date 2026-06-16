@@ -1,96 +1,20 @@
-# Portfolio Templates Repository
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-A collection of reusable portfolio website templates maintained using Git branches.
+# Run and deploy your AI Studio app
 
-## 📌 Overview
+This contains everything you need to run your app locally.
 
-This repository serves as a central storage for multiple portfolio templates. Each template is organized in its own branch, allowing independent development, maintenance, and version control without creating separate repositories.
+View your app in AI Studio: https://ai.studio/apps/6d8cb3e0-1798-405b-bc41-a40fa3c4cc26
 
-## 🌳 Branch Structure
+## Run Locally
 
-Each branch represents a different portfolio template.
+**Prerequisites:**  Node.js
 
-Example:
 
-```bash
-main
-├── portfolio-minimal
-├── portfolio-modern
-├── portfolio-developer
-├── portfolio-creative
-└── portfolio-business
-```
-
-> The `main` branch contains repository documentation and general project information.
-
-## 🚀 Getting Started
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/your-username/portfolio-templates.git
-cd portfolio-templates
-```
-
-### View Available Branches
-
-```bash
-git branch -r
-```
-
-### Switch to a Template Branch
-
-```bash
-git checkout portfolio-modern
-```
-
-or
-
-```bash
-git switch portfolio-modern
-```
-
-## 📂 Template List
-
-| Branch              | Description                                  |
-| ------------------- | -------------------------------------------- |
-| portfolio-minimal   | Clean and simple portfolio template          |
-| portfolio-modern    | Modern UI/UX portfolio template              |
-| portfolio-developer | Portfolio template for software developers   |
-| portfolio-creative  | Creative portfolio for designers and artists |
-| portfolio-business  | Professional business portfolio template     |
-
-> More templates will be added over time.
-
-## 🛠 Technologies
-
-Templates may include:
-
-* HTML5
-* CSS3
-* JavaScript
-* Vue.js
-* React
-* Tailwind CSS
-* Bootstrap
-
-Depending on the template branch.
-
-## 🤝 Contributing
-
-Contributions are welcome.
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push your branch
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License unless otherwise specified within individual template branches.
-
-## ⭐ Support
-
-If you find this repository useful, consider giving it a star to support future template development.
-
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

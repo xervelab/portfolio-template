@@ -1,0 +1,6 @@
+{
+  "name": "Elena Rostova - Fine Art Portfolio",
+  "description": "A minimalist fine art portfolio showcasing the curated paintings, exhibitions, and contact portal of Russian-American contemporary painter Elena Rostova.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
