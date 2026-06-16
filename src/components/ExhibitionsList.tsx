@@ -9,9 +9,9 @@ interface ExhibitionsListProps {
 
 export default function ExhibitionsList({ exhibitions }: ExhibitionsListProps) {
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12 bg-[#0A0A0A]" id="exhibitions-timeline-section">
-      <div className="text-center mb-14">
-        <h3 className="text-2xl font-light tracking-widest text-[#E5E5E5] font-display uppercase flex items-center justify-center gap-3">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12 bg-[#0A0A0A]" id="exhibitions-timeline-section">
+      <div className="text-center mb-8 sm:mb-14">
+        <h3 className="text-lg sm:text-2xl font-light tracking-widest text-[#E5E5E5] font-display uppercase flex items-center justify-center gap-2 sm:gap-3">
           <Award className="w-5 h-5 text-brand-gold" />
           EXHIBITION EXPEDITIONS
         </h3>
@@ -20,7 +20,7 @@ export default function ExhibitionsList({ exhibitions }: ExhibitionsListProps) {
         </p>
       </div>
 
-      <div className="relative border-l border-white/10 ml-4 pl-6 md:pl-8 space-y-12 pb-6">
+      <div className="relative border-l border-white/10 ml-2 sm:ml-4 pl-4 sm:pl-6 md:pl-8 space-y-8 sm:space-y-12 pb-6">
         {exhibitions.map((ex, idx) => {
           const isLive = ex.status === "Live Now";
           const isUpcoming = ex.status === "Upcoming";
@@ -35,7 +35,7 @@ export default function ExhibitionsList({ exhibitions }: ExhibitionsListProps) {
               id={`exemption-card-${ex.id}`}
             >
               {/* Timeline dot */}
-              <span className={`absolute -left-[31px] md:-left-[39px] top-1.5 w-4 h-4 rounded-full border-3 border-[#0A0A0A] flex items-center justify-center ${
+              <span className={`absolute -left-[25px] sm:-left-[31px] md:-left-[39px] top-1.5 w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 sm:border-3 border-[#0A0A0A] flex items-center justify-center ${
                 isLive 
                   ? "bg-brand-gold shadow-lg shadow-brand-gold/20" 
                   : isUpcoming 
@@ -48,7 +48,7 @@ export default function ExhibitionsList({ exhibitions }: ExhibitionsListProps) {
               </span>
 
               {/* Card Container */}
-              <div className="bg-[#111111] p-6 md:p-8 border border-white/15 hover:border-brand-gold/40 transition-all duration-500 shadow-2xl">
+              <div className="bg-[#111111] p-4 sm:p-6 md:p-8 border border-white/15 hover:border-brand-gold/40 transition-all duration-500 shadow-2xl">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                   <span className={`text-[8px] font-medium uppercase tracking-[0.2em] px-3 py-1 border ${
                     isLive

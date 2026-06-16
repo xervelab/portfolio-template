@@ -14,11 +14,33 @@
 }
 
 /* Custom global overrides to align with Editorial Minimalist Aesthetic */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   background-color: #0A0A0A;
   color: #E5E5E5;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Hide scrollbar utility for mobile horizontal scroll areas */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Use dynamic viewport height for mobile browsers with collapsible address bars */
+@supports (height: 100dvh) {
+  .h-full-dynamic {
+    height: 100dvh;
+  }
 }
 
 /* Custom minimalist scrollbar */

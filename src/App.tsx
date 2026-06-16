@@ -158,10 +158,10 @@ export default function App() {
       <div className="min-h-screen bg-[#0A0A0A] text-[#E5E5E5] flex flex-col font-sans">
         
         {/* Nav Header */}
-        <nav className="sticky top-0 z-30 bg-[#0A0A0A]/90 backdrop-blur-md border-b border-white/10 px-6 py-4">
+        <nav className="sticky top-0 z-30 bg-[#0A0A0A]/90 backdrop-blur-md border-b border-white/10 px-4 sm:px-6 py-3 sm:py-4">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-sm md:text-base tracking-[0.2em] font-light text-[#E5E5E5] uppercase font-display select-none">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xs sm:text-sm md:text-base tracking-[0.15em] sm:tracking-[0.2em] font-light text-[#E5E5E5] uppercase font-display select-none truncate">
                 Elena Rostova Studio
               </span>
             </div>
@@ -202,41 +202,41 @@ export default function App() {
           />
 
           {/* Section 2: Interactive Tabs Row (Editorial Identity Layout) */}
-          <div className="max-w-4xl mx-auto px-6 mt-4 border-t border-white/10 flex justify-center gap-10 md:gap-16">
+          <div className="max-w-4xl mx-auto px-3 sm:px-6 mt-4 border-t border-white/10 flex justify-center gap-4 sm:gap-10 md:gap-16 overflow-x-auto scrollbar-none">
             
             <button
               onClick={() => setActiveTab("masterpieces")}
-              className={`py-4 text-[10px] uppercase tracking-[0.2em] font-medium flex items-center gap-2 border-t border-transparent select-none cursor-pointer transition-all duration-300 ${
+              className={`py-3 sm:py-4 text-[9px] sm:text-[10px] uppercase tracking-[0.12em] sm:tracking-[0.2em] font-medium flex items-center gap-1.5 sm:gap-2 border-t border-transparent select-none cursor-pointer transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
                 activeTab === "masterpieces"
                   ? "border-white text-white font-semibold scale-102"
                   : "text-[#E5E5E5]/40 hover:text-[#E5E5E5]"
               }`}
             >
-              <Grid className="w-3.5 h-3.5 text-brand-gold/60" />
+              <Grid className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-gold/60" />
               Masterpieces
             </button>
 
             <button
               onClick={() => setActiveTab("journal")}
-              className={`py-4 text-[10px] uppercase tracking-[0.2em] font-medium flex items-center gap-2 border-t border-transparent select-none cursor-pointer transition-all duration-300 ${
+              className={`py-3 sm:py-4 text-[9px] sm:text-[10px] uppercase tracking-[0.12em] sm:tracking-[0.2em] font-medium flex items-center gap-1.5 sm:gap-2 border-t border-transparent select-none cursor-pointer transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
                 activeTab === "journal"
                   ? "border-white text-white font-semibold scale-102"
                   : "text-[#E5E5E5]/40 hover:text-[#E5E5E5]"
               }`}
             >
-              <BookOpen className="w-3.5 h-3.5 text-brand-gold/60" />
-              Studio Journal
+              <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-gold/60" />
+              Journal
             </button>
 
             <button
               onClick={() => setActiveTab("exhibitions")}
-              className={`py-4 text-[10px] uppercase tracking-[0.2em] font-medium flex items-center gap-2 border-t border-transparent select-none cursor-pointer transition-all duration-300 ${
+              className={`py-3 sm:py-4 text-[9px] sm:text-[10px] uppercase tracking-[0.12em] sm:tracking-[0.2em] font-medium flex items-center gap-1.5 sm:gap-2 border-t border-transparent select-none cursor-pointer transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
                 activeTab === "exhibitions"
                   ? "border-white text-white font-semibold scale-102"
                   : "text-[#E5E5E5]/40 hover:text-[#E5E5E5]"
               }`}
             >
-              <Award className="w-3.5 h-3.5 text-brand-gold/60" />
+              <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-gold/60" />
               Exhibitions
             </button>
 
@@ -253,7 +253,7 @@ export default function App() {
                 transition={{ duration: 0.3 }}
               >
                 {/* Filter chip bar */}
-                <div className="max-w-4xl mx-auto px-4">
+                <div className="max-w-4xl mx-auto px-2 sm:px-4">
                   <FilterBar
                     activeFilter={activeFilter}
                     onFilterChange={setActiveFilter}
@@ -302,7 +302,7 @@ export default function App() {
         </main>
 
         {/* Styled footer bar */}
-        <footer className="py-12 bg-[#060606] border-t border-white/5 mt-auto text-center space-y-3.5 select-none font-sans">
+        <footer className="py-8 sm:py-12 px-4 bg-[#060606] border-t border-white/5 mt-auto text-center space-y-3.5 select-none font-sans">
           <div className="flex items-center justify-center gap-2 text-brand-gold/60">
             <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-pulse" />
             <span className="text-[10px] uppercase tracking-[0.2em] font-medium">Elena Rostova Studio</span>

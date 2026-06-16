@@ -12,9 +12,9 @@ export default function JournalList({ posts, onLikePost }: JournalListProps) {
   const [activePost, setActivePost] = useState<JournalPost | null>(null);
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12 bg-[#0A0A0A]" id="studio-journal-section">
-      <div className="text-center mb-14">
-        <h3 className="text-2xl font-light tracking-widest text-[#E5E5E5] font-display uppercase flex items-center justify-center gap-3">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12 bg-[#0A0A0A]" id="studio-journal-section">
+      <div className="text-center mb-8 sm:mb-14">
+        <h3 className="text-lg sm:text-2xl font-light tracking-widest text-[#E5E5E5] font-display uppercase flex items-center justify-center gap-2 sm:gap-3">
           <BookMarked className="w-5 h-5 text-brand-gold" />
           THE STUDIO JOURNAL
         </h3>
@@ -23,16 +23,16 @@ export default function JournalList({ posts, onLikePost }: JournalListProps) {
         </p>
       </div>
 
-      <div className="space-y-10" id="journal-posts-grid">
+      <div className="space-y-6 sm:space-y-10" id="journal-posts-grid">
         {posts.map((post) => (
           <motion.article
             key={post.id}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col sm:flex-row gap-8 bg-[#111111] p-6 md:p-8 border border-white/10 hover:border-brand-gold/30 transition-all duration-500 shadow-2xl"
+            className="flex flex-col sm:flex-row gap-4 sm:gap-8 bg-[#111111] p-4 sm:p-6 md:p-8 border border-white/10 hover:border-brand-gold/30 transition-all duration-500 shadow-2xl"
           >
             {/* Post Image Cover */}
-            <div className="w-full sm:w-48 h-40 flex-shrink-0 overflow-hidden bg-[#0A0A0A] border border-white/5 relative">
+            <div className="w-full sm:w-48 h-36 sm:h-40 flex-shrink-0 overflow-hidden bg-[#0A0A0A] border border-white/5 relative">
               <img
                 src={post.imageUrl}
                 alt={post.title}

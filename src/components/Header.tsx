@@ -166,10 +166,10 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
   };
 
   return (
-    <header className="py-10 md:py-14 border-b border-white/10" id="artist-profile-header">
+    <header className="py-6 sm:py-10 md:py-14 border-b border-white/10" id="artist-profile-header">
       {/* Top Profile Card Container */}
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center md:items-start md:gap-16 gap-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="flex flex-col md:flex-row items-center md:items-start md:gap-16 gap-5 sm:gap-8">
           
           {/* Avatar Area with Elegant Minimal gold-cream Border */}
           <div className="relative group flex-shrink-0 cursor-pointer">
@@ -179,7 +179,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
                 src={profile.avatarUrl}
                 alt={profile.name}
                 referrerPolicy="no-referrer"
-                className="w-32 h-32 md:w-36 md:h-36 object-cover rounded-full filter grayscale-[15%] group-hover:grayscale-0 transition duration-500"
+                className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 object-cover rounded-full filter grayscale-[15%] group-hover:grayscale-0 transition duration-500"
                 id="artist-avatar"
               />
             </div>
@@ -192,10 +192,10 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
           </div>
 
           {/* Biography & Metrics Content Grid */}
-          <div className="flex-1 text-center md:text-left">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-5 mb-6">
+          <div className="flex-1 text-center md:text-left min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 mb-4 sm:mb-6">
               <div className="flex items-center justify-center md:justify-start gap-3">
-                <h1 className="text-2xl md:text-3xl font-light tracking-tight text-[#E5E5E5] font-display" id="artist-title">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-light tracking-tight text-[#E5E5E5] font-display" id="artist-title">
                   {profile.username}
                 </h1>
                 <span className="text-brand-gold border border-brand-gold/30 p-1 rounded-full inline-flex items-center justify-center text-[8px]" title="Represented Artist">
@@ -204,10 +204,10 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
               </div>
 
               {/* Action Callouts */}
-              <div className="flex flex-wrap items-center justify-center gap-3 mt-2 sm:mt-0">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-2 sm:mt-0">
                 <button
                   onClick={handleFollowToggle}
-                  className={`text-xs font-medium uppercase tracking-widest px-6 py-2 rounded-md transition-all duration-300 font-sans cursor-pointer ${
+                  className={`text-[10px] sm:text-xs font-medium uppercase tracking-widest px-4 sm:px-6 py-2 rounded-md transition-all duration-300 font-sans cursor-pointer ${
                     isFollowing
                       ? "bg-neutral-900 text-brand-gold border border-brand-gold/20 hover:bg-neutral-800"
                       : "bg-[#E5E5E5] text-black hover:bg-brand-cream"
@@ -218,10 +218,10 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
                 </button>
                 <button
                   onClick={onInquireClick}
-                  className="text-xs font-medium uppercase tracking-widest px-5 py-2 bg-neutral-950 border border-white/10 hover:border-brand-gold/50 text-[#E5E5E5] hover:text-brand-gold rounded-md transition-all duration-300 cursor-pointer flex items-center gap-2 font-sans"
+                  className="text-[10px] sm:text-xs font-medium uppercase tracking-widest px-3 sm:px-5 py-2 bg-neutral-950 border border-white/10 hover:border-brand-gold/50 text-[#E5E5E5] hover:text-brand-gold rounded-md transition-all duration-300 cursor-pointer flex items-center gap-1.5 sm:gap-2 font-sans"
                   id="inquire-button"
                 >
-                  <MessageSquare className="w-3.5 h-3.5" />
+                  <MessageSquare className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   Inquire
                 </button>
                 <button
@@ -236,7 +236,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
             </div>
 
             {/* Metrics List */}
-            <div className="flex items-center justify-center md:justify-start gap-8 mb-6 border-y md:border-y-0 border-white/10 py-3 md:py-0 text-[#E5E5E5]/60 font-sans font-light text-xs tracking-wider">
+            <div className="flex items-center justify-center md:justify-start gap-4 sm:gap-8 mb-6 border-y md:border-y-0 border-white/10 py-3 md:py-0 text-[#E5E5E5]/60 font-sans font-light text-[11px] sm:text-xs tracking-wider">
               <span>
                 <strong className="text-white font-medium">9</strong> masterpieces
               </span>
@@ -253,15 +253,15 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
             </div>
 
             {/* Detailed Credentials & Bio */}
-            <div className="text-sm space-y-3 mt-4">
-              <p className="font-serif italic text-lg text-brand-cream/90 font-light tracking-wide">{profile.name}</p>
-              <p className="text-brand-gold/80 italic text-xs tracking-wide font-serif">{profile.tagline}</p>
-              <p className="whitespace-pre-line leading-relaxed text-[#E5E5E5]/80 font-light max-w-xl text-center md:text-left">
+            <div className="text-xs sm:text-sm space-y-2 sm:space-y-3 mt-3 sm:mt-4">
+              <p className="font-serif italic text-base sm:text-lg text-brand-cream/90 font-light tracking-wide">{profile.name}</p>
+              <p className="text-brand-gold/80 italic text-[11px] sm:text-xs tracking-wide font-serif">{profile.tagline}</p>
+              <p className="whitespace-pre-line leading-relaxed text-[#E5E5E5]/80 font-light max-w-xl text-center md:text-left text-xs sm:text-sm">
                 {profile.bio}
               </p>
 
               {/* Sub-details Row */}
-              <div className="pt-3 flex flex-wrap justify-center md:justify-start gap-5 text-xs text-[#E5E5E5]/50 font-sans tracking-wide">
+              <div className="pt-3 flex flex-wrap justify-center md:justify-start gap-3 sm:gap-5 text-[11px] sm:text-xs text-[#E5E5E5]/50 font-sans tracking-wide">
                 <span className="flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-brand-gold/60" />
                   {profile.location}
@@ -281,7 +281,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
         </div>
 
         {/* Highlight Story Bubbles Row */}
-        <div className="mt-12 overflow-x-auto scrollbar-none flex justify-start md:justify-center gap-8 py-3 border-t border-white/10">
+        <div className="mt-8 sm:mt-12 overflow-x-auto scrollbar-none flex justify-start md:justify-center gap-4 sm:gap-8 py-3 px-2 border-t border-white/10">
           {HIGHLIGHTS.map((highlight) => (
             <button
               key={highlight.id}
@@ -297,7 +297,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
                     src={highlight.coverUrl}
                     alt={highlight.title}
                     referrerPolicy="no-referrer"
-                    className="w-14 h-14 md:w-16 md:h-16 object-cover rounded-full filter grayscale contrast-[110%] group-hover:grayscale-0 transition duration-300"
+                    className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 object-cover rounded-full filter grayscale contrast-[110%] group-hover:grayscale-0 transition duration-300"
                   />
                 </div>
               </div>

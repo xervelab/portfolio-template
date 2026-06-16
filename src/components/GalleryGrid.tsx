@@ -10,7 +10,7 @@ interface GalleryGridProps {
 
 export default function GalleryGrid({ artworks, onArtworkClick }: GalleryGridProps) {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 bg-[#0A0A0A]" id="gallery-grid-section">
+    <div className="max-w-4xl mx-auto px-3 sm:px-6 py-6 sm:py-10 bg-[#0A0A0A]" id="gallery-grid-section">
       <AnimatePresence mode="popLayout">
         {artworks.length === 0 ? (
           <motion.div
@@ -31,7 +31,7 @@ export default function GalleryGrid({ artworks, onArtworkClick }: GalleryGridPro
         ) : (
           <motion.div
             layout
-            className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-7"
+            className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 md:gap-7"
             id="portfolio-grid"
           >
             {artworks.map((art) => {

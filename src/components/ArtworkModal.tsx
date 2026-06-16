@@ -69,7 +69,7 @@ export default function ArtworkModal({
   };
 
   return (
-    <div className="fixed inset-0 z-55 flex items-center justify-center p-0 md:p-12 bg-black/90 backdrop-blur-md" id="artwork-modal-overlay">
+    <div className="fixed inset-0 z-55 flex items-center justify-center p-0 md:p-12 bg-black/90 backdrop-blur-md overflow-hidden" id="artwork-modal-overlay">
       {/* Click background to close */}
       <div className="absolute inset-0 cursor-default" onClick={onClose}></div>
 
@@ -79,7 +79,7 @@ export default function ArtworkModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 15 }}
         transition={{ type: "spring", speed: 10, bounciness: 3 }}
-        className="relative bg-[#111111] border border-white/10 w-full max-w-5xl h-full md:h-[80vh] md:max-h-[660px] flex flex-col md:flex-row md:rounded-lg overflow-hidden shadow-2xl z-10"
+        className="relative bg-[#111111] border border-white/10 w-full max-w-5xl h-full md:h-[80vh] md:max-h-[660px] flex flex-col md:flex-row md:rounded-lg overflow-hidden shadow-2xl z-10 max-h-[100dvh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button (Top right float over art on mobile/tablet) */}
@@ -91,7 +91,7 @@ export default function ArtworkModal({
         </button>
 
         {/* LEFT PANEL: Responsive Canvas View */}
-        <div className="relative flex-[1.4] bg-[#0A0A0A] flex items-center justify-center h-[42%] md:h-full group select-none overflow-hidden p-6 md:p-12 border-b md:border-b-0 md:border-r border-white/10">
+        <div className="relative flex-[1.4] bg-[#0A0A0A] flex items-center justify-center h-[35%] sm:h-[42%] md:h-full group select-none overflow-hidden p-3 sm:p-6 md:p-12 border-b md:border-b-0 md:border-r border-white/10 min-h-0">
           <div className="w-full h-full max-w-md max-h-md flex items-center justify-center bg-[#151515] shadow-inner border border-white/5 relative">
             <img
               src={artwork.imageUrl}
@@ -128,7 +128,7 @@ export default function ArtworkModal({
         </div>
 
         {/* RIGHT PANEL: Instagram-style Comments Sidebar */}
-        <div className="flex-1 h-[58%] md:h-full flex flex-col bg-[#111111]">
+        <div className="flex-1 h-[65%] sm:h-[58%] md:h-full flex flex-col bg-[#111111] min-h-0 overflow-hidden">
           
           {/* Sidebar Header: Artist Intro */}
           <div className="p-4 border-b border-white/5 bg-[#111111] flex items-center justify-between">

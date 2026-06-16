@@ -11,8 +11,8 @@ export default function FilterBar({ activeFilter, onFilterChange, categories }: 
   return (
     <div className="w-full py-8 border-b border-white/10 flex flex-col items-center justify-center bg-[#0A0A0A]" id="filter-bar-container">
       {/* Category Horizontal Scrolling Container */}
-      <div className="w-full overflow-x-auto scrollbar-none flex justify-center py-1">
-        <div className="flex items-center gap-8 md:gap-12 px-6">
+      <div className="w-full overflow-x-auto scrollbar-none flex justify-start sm:justify-center py-1">
+        <div className="flex items-center gap-4 sm:gap-8 md:gap-12 px-3 sm:px-6">
           {categories.map((cat) => {
             const isActive = activeFilter === cat.name;
             return (
