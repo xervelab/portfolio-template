@@ -177,9 +177,10 @@ function StoryViewer({ highlights, startIndex, onClose }: StoryViewerProps) {
 interface HeaderProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  onMessageClick?: () => void;
 }
 
-export function Header({ activeTab, onTabChange }: HeaderProps) {
+export function Header({ activeTab, onTabChange, onMessageClick }: HeaderProps) {
   const [following, setFollowing] = useState(false);
   const [storyIndex, setStoryIndex] = useState<number | null>(null);
   const { data: profile } = useSheetSingle<ProfileData>("Profile", mapProfile, DEFAULT_PROFILE);
@@ -188,8 +189,6 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
   const tabs = [
     { id: "posts", icon: Grid3X3, label: "POSTS" },
     { id: "reels", icon: PlaySquare, label: "REELS" },
-    { id: "saved", icon: BookmarkIcon, label: "SAVED" },
-    { id: "tagged", icon: UserSquare2, label: "TAGGED" },
   ];
 
   return (
@@ -254,7 +253,8 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
                 {following ? "Following" : "Follow"}
               </motion.button>
               <button
-                className="px-4 py-1.5 rounded-lg text-sm"
+                onClick={onMessageClick}
+                className="px-4 py-1.5 rounded-lg text-sm cursor-pointer transition-all duration-200 hover:opacity-80"
                 style={{
                   background: "var(--secondary)",
                   color: "var(--foreground)",

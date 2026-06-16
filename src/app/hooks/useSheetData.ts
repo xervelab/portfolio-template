@@ -1,10 +1,50 @@
 import { useState, useEffect } from "react";
 
-const SHEETDB_BASE = "https://sheetdb.io/api/v1/de7mxzfmbvmy7";
+const SPREADSHEET_ID = "1ARR9y8R7EU1ArV4q92l1kIhFVwR6YUIQ5To6NlPIRwM";
+const GVIZ_BASE = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
 /**
- * Generic hook to fetch data from a specific SheetDB tab (sheet name).
- * SheetDB uses ?sheet=<name> to query different tabs.
+ * Parses the Google Visualization JSON response format.
+ * The response looks like: google.visualization.Query.setResponse({...})
+ * We strip the JSONP wrapper and convert cols/rows into plain objects.
+ */
+function parseGvizResponse(text: string): Record<string, any>[] {
+  const jsonStr = text
+    .replace(/^[^(]*\(/, "")
+    .replace(/\);?\s*$/, "");
+
+  const parsed = JSON.parse(jsonStr);
+  const { cols, rows } = parsed.table;
+
+  const headers: string[] = cols.map((col: any) => col.label || col.id);
+
+  return (rows || []).map((row: any) => {
+    const obj: Record<string, any> = {};
+    row.c.forEach((cell: any, idx: number) => {
+      if (cell && cell.v !== null && cell.v !== undefined) {
+        if (typeof cell.v === "string" && cell.v.startsWith("Date(")) {
+          obj[headers[idx]] = cell.f ?? cell.v;
+        } else {
+          obj[headers[idx]] = cell.v;
+        }
+      } else {
+        obj[headers[idx]] = "";
+      }
+    });
+    return obj;
+  });
+}
+
+async function fetchSheet(sheetName: string): Promise<Record<string, any>[]> {
+  const url = `${GVIZ_BASE}&headers=1&sheet=${encodeURIComponent(sheetName)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  return parseGvizResponse(text);
+}
+
+/**
+ * Generic hook to fetch data from a specific Google Sheets tab (sheet name).
  */
 export function useSheetData<T>(
   sheetName: string,
@@ -17,16 +57,10 @@ export function useSheetData<T>(
   useEffect(() => {
     let cancelled = false;
 
-    async function fetchData() {
+    async function load() {
       try {
-        const url = `${SHEETDB_BASE}?sheet=${encodeURIComponent(sheetName)}`;
-        const res = await fetch(url, { redirect: "follow" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        const rows: any[] = Array.isArray(json) ? json : json.data ?? json.rows ?? [];
-
+        const rows = await fetchSheet(sheetName);
         if (rows.length === 0) throw new Error("Empty");
-
         if (!cancelled) {
           setData(mapper(rows));
           setLoading(false);
@@ -39,7 +73,7 @@ export function useSheetData<T>(
       }
     }
 
-    fetchData();
+    load();
     return () => { cancelled = true; };
   }, [sheetName]);
 
@@ -60,16 +94,10 @@ export function useSheetSingle<T>(
   useEffect(() => {
     let cancelled = false;
 
-    async function fetchData() {
+    async function load() {
       try {
-        const url = `${SHEETDB_BASE}?sheet=${encodeURIComponent(sheetName)}`;
-        const res = await fetch(url, { redirect: "follow" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        const rows: any[] = Array.isArray(json) ? json : json.data ?? json.rows ?? [];
-
+        const rows = await fetchSheet(sheetName);
         if (rows.length === 0) throw new Error("Empty");
-
         if (!cancelled) {
           setData(mapper(rows[0]));
           setLoading(false);
@@ -82,7 +110,7 @@ export function useSheetSingle<T>(
       }
     }
 
-    fetchData();
+    load();
     return () => { cancelled = true; };
   }, [sheetName]);
 
@@ -109,17 +137,17 @@ export interface ProfileData {
 }
 
 export const DEFAULT_PROFILE: ProfileData = {
-  username: "maya.chen.art",
-  displayName: "Maya Chen",
-  avatarUrl: "https://images.unsplash.com/photo-1551180452-aea351b23949?w=150&h=150&fit=crop&auto=format",
-  bio: "Contemporary painter · Oil & acrylic on canvas\nNew York · Exhibitions in NYC, Paris & Tokyo",
-  quote: "Every canvas is a conversation with silence",
-  location: "New York, NY",
-  posts: "248",
-  followers: "42.5K",
-  following: "312",
-  currentlyWorking: '"Untitled No. 31" — Oil on linen, 48×60in',
-  availableForCommissions: true,
+  username: "",
+  displayName: "",
+  avatarUrl: "",
+  bio: "",
+  quote: "",
+  location: "",
+  posts: "0",
+  followers: "0",
+  following: "0",
+  currentlyWorking: "",
+  availableForCommissions: false,
 };
 
 export function mapProfile(row: any): ProfileData {
@@ -199,6 +227,29 @@ export function mapSocials(rows: any[]): SocialItem[] {
   }));
 }
 
+// ── Sheet: "Reels" ──
+export interface ReelItem {
+  id: number;
+  title: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  likes: number;
+  comments: number;
+  caption: string;
+}
+
+export function mapReels(rows: any[]): ReelItem[] {
+  return rows.map((row, idx) => ({
+    id: Number(row.ID ?? row.id) || idx + 1,
+    title: row.Title ?? row.title ?? "",
+    videoUrl: row["Video URL"] ?? row.videoUrl ?? row.video ?? "",
+    thumbnailUrl: row["Thumbnail URL"] ?? row.thumbnailUrl ?? row.thumbnail ?? "",
+    likes: Number(String(row.Likes ?? row.likes ?? 0).replace(/,/g, "")) || 0,
+    comments: Number(String(row.Comments ?? row.comments ?? 0).replace(/,/g, "")) || 0,
+    caption: row.Caption ?? row.caption ?? "",
+  }));
+}
+
 // ── Sheet: "Site" ──
 export interface SiteData {
   brandName: string;
@@ -208,10 +259,10 @@ export interface SiteData {
 }
 
 export const DEFAULT_SITE: SiteData = {
-  brandName: "Maya Chen",
-  brandSlug: "maya.art",
-  copyright: "© 2024 Maya Chen · All Rights Reserved · New York, NY",
-  footerQuote: "Art is not what you see, but what you make others see.",
+  brandName: "",
+  brandSlug: "",
+  copyright: "",
+  footerQuote: "",
 };
 
 export function mapSite(row: any): SiteData {

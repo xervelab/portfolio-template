@@ -1,20 +1,105 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/fonts.css";
 import { Navbar } from "./components/Navbar";
 import { Header } from "./components/Header";
 import { Gallery } from "./components/Gallery";
+import { Reels } from "./components/Reels";
 import { ContactForm } from "./components/ContactForm";
 import { SocialLinks } from "./components/SocialLinks";
 import { AnimatePresence, motion } from "motion/react";
 import { useSheetSingle, mapSite, DEFAULT_SITE, type SiteData } from "./hooks/useSheetData";
 
 type Page = "home" | "explore" | "contact" | "notifications";
-type Tab = "posts" | "reels" | "saved" | "tagged";
+type Tab = "posts" | "reels";
 
 export default function App() {
   const [page, setPage] = useState<Page>("home");
   const [activeTab, setActiveTab] = useState<Tab>("posts");
-  const { data: site } = useSheetSingle<SiteData>("Site", mapSite, DEFAULT_SITE);
+  const { data: site, loading: siteLoading } = useSheetSingle<SiteData>("Site", mapSite, DEFAULT_SITE);
+
+  // Minimum loading duration (3 seconds)
+  const [minLoadingDone, setMinLoadingDone] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setMinLoadingDone(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loading screen while data is being fetched or minimum time hasn't passed
+  const isInitialLoading = siteLoading || !minLoadingDone;
+
+  if (isInitialLoading) {
+    return (
+      <div
+        className="noise-overlay"
+        style={{
+          background: "var(--background)",
+          minHeight: "100vh",
+          fontFamily: "'Inter', sans-serif",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "24px" }}
+        >
+          {/* Animated spinner ring */}
+          <div style={{ position: "relative", width: "64px", height: "64px" }}>
+            <div
+              style={{
+                width: "64px",
+                height: "64px",
+                borderRadius: "50%",
+                border: "2px solid transparent",
+                borderTopColor: "#f59e0b",
+                borderRightColor: "rgba(245, 158, 11, 0.3)",
+                animation: "spin 1.5s linear infinite",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span style={{ color: "#f59e0b", fontSize: "18px", animation: "pulse 2s ease-in-out infinite" }}>✦</span>
+            </div>
+          </div>
+
+          {/* Loading text */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}
+          >
+            <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.25em", color: "var(--muted-foreground)", fontFamily: "'Inter', sans-serif" }}>
+              Loading portfolio
+            </p>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 0.5, duration: 0.8, ease: "easeInOut" }}
+              style={{ width: "96px", height: "1px", background: "linear-gradient(90deg, transparent, rgba(245,158,11,0.6), transparent)", transformOrigin: "center" }}
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* Inline keyframes for spin and pulse */}
+        <style>{`
+          @keyframes spin { to { transform: rotate(360deg); } }
+          @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="noise-overlay" style={{ background: "var(--background)", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
@@ -30,41 +115,9 @@ export default function App() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <Header activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)} />
+              <Header activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)} onMessageClick={() => setPage("contact")} />
               {activeTab === "posts" && <Gallery />}
-              {activeTab === "reels" && (
-                <div className="flex flex-col items-center justify-center py-24 gap-3">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, rgba(245,158,11,0.15), rgba(236,72,152,0.15))" }}>
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "var(--muted-foreground)" }}><path d="M5 3l14 9-14 9V3z"/></svg>
-                  </div>
-                  <p style={{ color: "var(--muted-foreground)", fontFamily: "'Inter', sans-serif", fontSize: "14px" }}>
-                    Reels coming soon
-                  </p>
-                  <p style={{ color: "var(--muted-foreground)", fontFamily: "'DM Serif Display', serif", fontSize: "13px", fontStyle: "italic", opacity: 0.6 }}>
-                    Studio time-lapses & behind the easel
-                  </p>
-                </div>
-              )}
-              {activeTab === "saved" && (
-                <div className="flex flex-col items-center justify-center py-24 gap-3">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, rgba(245,158,11,0.15), rgba(139,92,246,0.15))" }}>
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "var(--muted-foreground)" }}><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-                  </div>
-                  <p style={{ color: "var(--muted-foreground)", fontFamily: "'Inter', sans-serif", fontSize: "14px" }}>
-                    Saved posts appear here
-                  </p>
-                </div>
-              )}
-              {activeTab === "tagged" && (
-                <div className="flex flex-col items-center justify-center py-24 gap-3">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(59,130,246,0.15))" }}>
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "var(--muted-foreground)" }}><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
-                  </div>
-                  <p style={{ color: "var(--muted-foreground)", fontFamily: "'Inter', sans-serif", fontSize: "14px" }}>
-                    No tagged posts yet
-                  </p>
-                </div>
-              )}
+              {activeTab === "reels" && <Reels />}
               <SocialLinks />
             </motion.div>
           ) : (
