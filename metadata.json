@@ -1,0 +1,6 @@
+{
+  "name": "Virtual Assistant Creative Portfolio",
+  "description": "A creative portfolio for a virtual assistant with full service listings, dynamic calendar booking system, and a live AI support assistant chat.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
