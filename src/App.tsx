@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { initialArtworks, artistProfile, initialExhibitions, initialJournalPosts } from "./data";
 import { Artwork, JournalPost, Exhibition } from "./types";
+import { useSheetSingle, useSheetData, mapProfile, mapGallery, mapExhibitions, mapJournal, mapSite, DEFAULT_PROFILE, DEFAULT_SITE, type SiteConfig } from "./hooks/useSheetData";
 import Header from "./components/Header";
 import FilterBar from "./components/FilterBar";
 import GalleryGrid from "./components/GalleryGrid";
@@ -20,10 +20,42 @@ export default function App() {
   });
   const [activeTab, setActiveTab] = useState<"masterpieces" | "journal" | "exhibitions">("masterpieces");
 
+  // Fetch data from SheetDB
+  const { data: profile, loading: profileLoading } = useSheetSingle("Profile", mapProfile, DEFAULT_PROFILE);
+  const { data: sheetArtworks } = useSheetData("Gallery", mapGallery, []);
+  const { data: sheetExhibitions } = useSheetData("Exhibitions", mapExhibitions, []);
+  const { data: sheetJournal } = useSheetData("Journal", mapJournal, []);
+  const { data: site, loading: siteLoading } = useSheetSingle("Site", mapSite, DEFAULT_SITE);
+
+  // Minimum loading duration (3 seconds)
+  const [minLoadingDone, setMinLoadingDone] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setMinLoadingDone(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Stateful collections to support live local mutations
-  const [artworks, setArtworks] = useState<Artwork[]>(initialArtworks);
-  const [journalPosts, setJournalPosts] = useState<JournalPost[]>(initialJournalPosts);
-  const [exhibitions, setExhibitions] = useState<Exhibition[]>(initialExhibitions);
+  const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [journalPosts, setJournalPosts] = useState<JournalPost[]>([]);
+  const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
+
+  // Sync sheet data into local state when it arrives
+  useEffect(() => {
+    if (sheetArtworks.length > 0) setArtworks(sheetArtworks);
+  }, [sheetArtworks]);
+
+  useEffect(() => {
+    if (sheetExhibitions.length > 0) setExhibitions(sheetExhibitions);
+  }, [sheetExhibitions]);
+
+  useEffect(() => {
+    if (sheetJournal.length > 0) setJournalPosts(sheetJournal);
+  }, [sheetJournal]);
+
+  // Set page title from site config
+  useEffect(() => {
+    if (site.brandName) document.title = site.brandName;
+  }, [site.brandName]);
 
   // Filter state for masterpieces
   const [activeFilter, setActiveFilter] = useState<string>("All");
@@ -160,6 +192,48 @@ export default function App() {
     ? artworks
     : artworks.filter((art) => art.category === activeFilter);
 
+  // Show loading screen while profile data is being fetched or minimum time hasn't passed
+  const isInitialLoading = profileLoading || siteLoading || !minLoadingDone;
+
+  if (isInitialLoading) {
+    return (
+      <div className={`min-h-screen flex flex-col items-center justify-center ${darkMode ? "bg-[#0A0A0A]" : "bg-[#FAFAFA]"} transition-colors duration-300`}>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex flex-col items-center gap-6"
+        >
+          {/* Animated shimmer ring */}
+          <div className="relative">
+            <div className="w-16 h-16 rounded-full border-2 border-transparent bg-gradient-to-tr from-brand-gold/40 to-brand-cream/30 animate-spin" style={{ animationDuration: "2s" }}></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-brand-gold animate-pulse" />
+            </div>
+          </div>
+
+          {/* Loading text */}
+          <div className="flex flex-col items-center gap-2">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className={`text-[10px] uppercase tracking-[0.25em] font-medium ${darkMode ? "text-white/40" : "text-neutral-400"} font-sans`}
+            >
+              Loading portfolio
+            </motion.p>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 0.5, duration: 0.8, ease: "easeInOut" }}
+              className="w-24 h-[1px] bg-gradient-to-r from-transparent via-brand-gold/60 to-transparent origin-center"
+            />
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div id="app-root-container">
       
@@ -171,7 +245,7 @@ export default function App() {
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-xs sm:text-sm md:text-base tracking-[0.15em] sm:tracking-[0.2em] font-light text-neutral-900 dark:text-[#E5E5E5] uppercase font-display select-none truncate">
-                Elena Rostova Studio
+                {site.brandName}
               </span>
             </div>
 
@@ -205,7 +279,7 @@ export default function App() {
           
           {/* Section 1: Top Bio Card & Highlights */}
           <Header
-            profile={artistProfile}
+            profile={profile}
             onInquireClick={() => handleTriggerInquiry("")}
             onAddPostClick={() => setShowAddPost(true)}
           />
@@ -314,14 +388,14 @@ export default function App() {
         <footer className="py-8 sm:py-12 px-4 bg-neutral-100 dark:bg-[#060606] border-t border-neutral-200 dark:border-white/5 mt-auto text-center space-y-3.5 select-none font-sans transition-colors duration-300">
           <div className="flex items-center justify-center gap-2 text-brand-gold/60">
             <Sparkles className="w-3.5 h-3.5 text-brand-gold animate-pulse" />
-            <span className="text-[10px] uppercase tracking-[0.2em] font-medium">Elena Rostova Studio</span>
+            <span className="text-[10px] uppercase tracking-[0.2em] font-medium">{site.brandName}</span>
           </div>
           <p className="text-[10px] text-neutral-500 dark:text-zinc-500 font-serif italic tracking-wide">
-            © 2026 Elena Rostova. Co-represented globally by Galerie de l'Élysée, Paris.
+            {site.footerText}
           </p>
           <p className="text-[9px] text-neutral-400 dark:text-neutral-600 font-mono uppercase tracking-[0.18em]">
-            Powered by 
-            <a href="https://xervelab.online" className="ml-2 underline decoration-dotted" target="_blank" rel="noopener noreferrer">XerveLab Online</a>
+            {site.footerSubtext}
+            <a href={site.poweredByUrl} className="ml-2 underline decoration-dotted" target="_blank" rel="noopener noreferrer">XerveLab Online</a>
           </p>
         </footer>
 

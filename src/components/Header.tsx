@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ArtistProfile } from "../types";
 import { Check, Compass, Globe, MapPin, Sparkles, MessageSquare, Plus, ArrowLeft, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { useSheetData, mapHighlights, type Highlight } from "../hooks/useSheetData";
 
 interface HeaderProps {
   profile: ArtistProfile;
@@ -9,86 +10,10 @@ interface HeaderProps {
   onAddPostClick: () => void;
 }
 
-interface Highlight {
-  id: string;
-  title: string;
-  coverUrl: string;
-  stories: {
-    url: string;
-    type: "image";
-    caption: string;
-  }[];
-}
-
-const HIGHLIGHTS: Highlight[] = [
-  {
-    id: "h1",
-    title: "🎨 Studio Room",
-    coverUrl: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&q=80&w=200",
-    stories: [
-      {
-        url: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&q=80&w=800",
-        type: "image",
-        caption: "Late night reflections under the canvas lights. Oil odors & jazz playing."
-      },
-      {
-        url: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=800",
-        type: "image",
-        caption: "Palette setup of the day. Pure cadmium, prussian blue & ochres ready."
-      }
-    ]
-  },
-  {
-    id: "h2",
-    title: "🖼️ Paris Show",
-    coverUrl: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=200",
-    stories: [
-      {
-        url: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=800",
-        type: "image",
-        caption: "Galerie de l'Élysée opening. Grateful for everyone who turned up!"
-      },
-      {
-        url: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=800",
-        type: "image",
-        caption: "'Amaryllis Nocturne' standing on the East gallery wall under museum spotlight."
-      }
-    ]
-  },
-  {
-    id: "h3",
-    title: "✨ Raw Process",
-    coverUrl: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=200",
-    stories: [
-      {
-        url: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=800",
-        type: "image",
-        caption: "Charcoal underdrawings before the paint glazes settle. The foundation."
-      },
-      {
-        url: "/images/artwork_woodlands_1781577205679.jpg",
-        type: "image",
-        caption: "Finishing touches on the Gilded Forest woodland canopy using a heavy trowel."
-      }
-    ]
-  },
-  {
-    id: "h4",
-    title: "🍵 Musings",
-    coverUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200",
-    stories: [
-      {
-        url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=800",
-        type: "image",
-        caption: "Answering your DM questions: Yes, I grind my own minerals for the watercolor!"
-      }
-    ]
-  }
-];
-
 export default function Header({ profile, onInquireClick, onAddPostClick }: HeaderProps) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followers, setFollowers] = useState(profile.followersCount);
+  const { data: highlights } = useSheetData<Highlight>("Highlights", mapHighlights, []);
   const [activeHighlight, setActiveHighlight] = useState<Highlight | null>(null);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [storyProgress, setStoryProgress] = useState(0);
@@ -282,7 +207,7 @@ export default function Header({ profile, onInquireClick, onAddPostClick }: Head
 
         {/* Highlight Story Bubbles Row */}
         <div className="mt-8 sm:mt-12 overflow-x-auto scrollbar-none flex justify-start md:justify-center gap-4 sm:gap-8 py-3 px-2 border-t border-neutral-200 dark:border-white/10 transition-colors duration-300">
-          {HIGHLIGHTS.map((highlight) => (
+          {highlights.map((highlight) => (
             <button
               key={highlight.id}
               onClick={() => startStory(highlight)}
