@@ -1,4 +1,4 @@
-import { Home, Search, PlusSquare, Heart, Mail } from "lucide-react";
+import { Home, Search, PlusSquare, Heart, Mail, Palette } from "lucide-react";
 
 interface NavbarProps {
   activePage: string;
@@ -17,21 +17,24 @@ export function Navbar({ activePage, onPageChange }: NavbarProps) {
     <>
       {/* Desktop top nav */}
       <nav
-        className="sticky top-0 z-40 hidden md:flex items-center justify-between px-6 h-14 border-b"
-        style={{ background: "var(--background)", borderColor: "var(--border)" }}
+        className="sticky top-0 z-40 hidden md:flex items-center justify-between px-6 h-16 border-b backdrop-blur-md"
+        style={{ background: "color-mix(in srgb, var(--background) 85%, transparent)", borderColor: "var(--border)" }}
       >
-        <div
-          style={{
-            fontFamily: "'DM Serif Display', serif",
-            fontSize: "22px",
-            fontWeight: 400,
-            fontStyle: "italic",
-            color: "var(--foreground)",
-            cursor: "pointer",
-          }}
-          onClick={() => onPageChange("home")}
-        >
-          maya.art
+        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onPageChange("home")}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)" }}>
+            <Palette size={14} color="#fff" strokeWidth={2.5} />
+          </div>
+          <div
+            className="gradient-text"
+            style={{
+              fontFamily: "'DM Serif Display', serif",
+              fontSize: "22px",
+              fontWeight: 400,
+              fontStyle: "italic",
+            }}
+          >
+            maya.art
+          </div>
         </div>
 
         <div className="flex items-center gap-6">
@@ -40,12 +43,16 @@ export function Navbar({ activePage, onPageChange }: NavbarProps) {
               key={id}
               onClick={() => onPageChange(id)}
               title={label}
+              className="relative p-2 rounded-lg transition-all duration-200"
               style={{
                 color: activePage === id ? "var(--foreground)" : "var(--muted-foreground)",
-                transition: "color 0.15s",
+                background: activePage === id ? "var(--secondary)" : "transparent",
               }}
             >
-              <Icon size={24} strokeWidth={activePage === id ? 2.5 : 1.5} />
+              <Icon size={22} strokeWidth={activePage === id ? 2.5 : 1.5} />
+              {activePage === id && (
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: "#f59e0b" }} />
+              )}
             </button>
           ))}
         </div>
@@ -53,19 +60,23 @@ export function Navbar({ activePage, onPageChange }: NavbarProps) {
 
       {/* Mobile bottom nav */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 flex md:hidden items-center justify-around h-14 border-t"
-        style={{ background: "var(--background)", borderColor: "var(--border)" }}
+        className="fixed bottom-0 left-0 right-0 z-40 flex md:hidden items-center justify-around h-14 border-t backdrop-blur-md"
+        style={{ background: "color-mix(in srgb, var(--background) 90%, transparent)", borderColor: "var(--border)" }}
       >
         {items.map(({ id, icon: Icon, label }) => (
           <button
             key={id}
             onClick={() => onPageChange(id)}
             title={label}
+            className="relative p-2 rounded-lg transition-colors duration-200"
             style={{
               color: activePage === id ? "var(--foreground)" : "var(--muted-foreground)",
             }}
           >
             <Icon size={24} strokeWidth={activePage === id ? 2.5 : 1.5} />
+            {activePage === id && (
+              <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: "#f59e0b" }} />
+            )}
           </button>
         ))}
       </nav>

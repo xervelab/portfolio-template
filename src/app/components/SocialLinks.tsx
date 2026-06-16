@@ -61,18 +61,23 @@ const socials = [
 export function SocialLinks() {
   return (
     <div className="max-w-[935px] mx-auto px-4 py-12 border-t" style={{ borderColor: "var(--border)" }}>
-      <h2
-        style={{
-          fontFamily: "'DM Serif Display', serif",
-          fontSize: "22px",
-          fontWeight: 400,
-          color: "var(--foreground)",
-          marginBottom: "24px",
-          textAlign: "center",
-        }}
-      >
-        Find me everywhere
-      </h2>
+      <div className="flex flex-col items-center gap-2 mb-8">
+        <h2
+          style={{
+            fontFamily: "'DM Serif Display', serif",
+            fontSize: "22px",
+            fontWeight: 400,
+            color: "var(--foreground)",
+          }}
+        >
+          Find me everywhere
+        </h2>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-px" style={{ background: "linear-gradient(90deg, transparent, var(--border))" }} />
+          <span className="gradient-text" style={{ fontSize: "12px", fontFamily: "'DM Serif Display', serif", fontStyle: "italic" }}>connect & collect</span>
+          <div className="w-8 h-px" style={{ background: "linear-gradient(90deg, var(--border), transparent)" }} />
+        </div>
+      </div>
       <div className="flex flex-wrap justify-center gap-3">
         {socials.map(({ name, handle, url, color, icon }) => (
           <a
@@ -80,7 +85,7 @@ export function SocialLinks() {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-200 group"
+            className="flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-300 group hover:scale-[1.02] hover:shadow-lg"
             style={{
               background: "var(--secondary)",
               border: "1px solid var(--border)",
@@ -88,12 +93,14 @@ export function SocialLinks() {
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLAnchorElement).style.borderColor = color;
+              (e.currentTarget as HTMLAnchorElement).style.boxShadow = `0 8px 24px ${color}20`;
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border)";
+              (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none";
             }}
           >
-            <span style={{ color }}>{icon}</span>
+            <span style={{ color }} className="transition-transform duration-300 group-hover:scale-110">{icon}</span>
             <div>
               <p style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: "13px", color: "var(--foreground)", lineHeight: 1.2 }}>
                 {name}
@@ -102,7 +109,7 @@ export function SocialLinks() {
                 {handle}
               </p>
             </div>
-            <ExternalLink size={14} style={{ color: "var(--muted-foreground)", marginLeft: "4px" }} />
+            <ExternalLink size={14} style={{ color: "var(--muted-foreground)", marginLeft: "4px" }} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </a>
         ))}
       </div>

@@ -1,106 +1,75 @@
-import { useState } from "react";
-import { Heart, MessageCircle, Bookmark, Share2, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Heart, MessageCircle, Bookmark, Share2, X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-const paintings = [
-  {
-    id: 1,
-    url: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&h=600&fit=crop&auto=format",
-    title: "Crimson Tide",
-    medium: "Oil on canvas, 36×48in",
-    year: 2024,
-    likes: 3241,
-    comments: 87,
-    caption: "Sometimes the canvas bleeds what words can't say. 🎨 #abstractart #oilpainting #contemporaryart",
-  },
-  {
-    id: 2,
-    url: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?w=600&h=600&fit=crop&auto=format",
-    title: "Spectrum No. 7",
-    medium: "Acrylic on canvas, 24×30in",
-    year: 2024,
-    likes: 2187,
-    comments: 54,
-    caption: "Red, blue, yellow — the whole world in three primary truths. Available at the studio. #spectrum #acrylicpainting",
-  },
-  {
-    id: 3,
-    url: "https://images.unsplash.com/photo-1618331835717-801e976710b2?w=600&h=600&fit=crop&auto=format",
-    title: "Spring Emergence",
-    medium: "Oil on canvas, 30×40in",
-    year: 2024,
-    likes: 4052,
-    comments: 112,
-    caption: "Green breaking through. Painted during three consecutive spring mornings. ☀️ #spring #oilpainting",
-  },
-  {
-    id: 4,
-    url: "https://images.unsplash.com/photo-1618331833071-ce81bd50d300?w=600&h=600&fit=crop&auto=format",
-    title: "Ocean Memory",
-    medium: "Oil on canvas, 48×60in",
-    year: 2023,
-    likes: 5890,
-    comments: 203,
-    caption: "The ocean holds every colour it's ever seen. Large format piece. DM for details. 🌊 #oceanpainting #blueabstract",
-  },
-  {
-    id: 5,
-    url: "https://images.unsplash.com/photo-1533208087231-c3618eab623c?w=600&h=600&fit=crop&auto=format",
-    title: "Fractured Light",
-    medium: "Mixed media, 20×24in",
-    year: 2023,
-    likes: 1923,
-    comments: 41,
-    caption: "Light doesn't break — it multiplies. Mixed media exploration. #lightpainting #mixedmedia",
-  },
-  {
-    id: 6,
-    url: "https://images.unsplash.com/photo-1531913764164-f85c52e6e654?w=600&h=600&fit=crop&auto=format",
-    title: "Midnight Storm",
-    medium: "Acrylic on canvas, 36×36in",
-    year: 2023,
-    likes: 3417,
-    comments: 98,
-    caption: "Painted entirely at night. Blue and red — tension before the calm. #midnightstudio #acrylicpainting",
-  },
-  {
-    id: 7,
-    url: "https://images.unsplash.com/photo-1532640331846-d2da5987c3ee?w=600&h=600&fit=crop&auto=format",
-    title: "Carnival Dream",
-    medium: "Oil on canvas, 24×36in",
-    year: 2023,
-    likes: 2761,
-    comments: 67,
-    caption: "A dream I kept having about a childhood fair. #carnival #oilpainting #figurative",
-  },
-  {
-    id: 8,
-    url: "https://images.unsplash.com/photo-1552312097-8ef75595e2a2?w=600&h=600&fit=crop&auto=format",
-    title: "Dusk Protocol",
-    medium: "Acrylic on board, 18×24in",
-    year: 2022,
-    likes: 1654,
-    comments: 33,
-    caption: "The moment between day and not-yet-night. One of my favorites from the 2022 series. #dusk #moodpainting",
-  },
-  {
-    id: 9,
-    url: "https://images.unsplash.com/photo-1523372102243-c9426fc31b88?w=600&h=600&fit=crop&auto=format",
-    title: "Silent Garden",
-    medium: "Oil on canvas, 30×30in",
-    year: 2022,
-    likes: 4103,
-    comments: 145,
-    caption: "Gardens remember everything. This piece took 6 weeks. #garden #oilpainting #texture",
-  },
-];
+const SHEET_API_URL =
+  "https://sheetdb.io/api/v1/de7mxzfmbvmy7";
+
+interface Painting {
+  id: number;
+  url: string;
+  title: string;
+  medium: string;
+  year: number;
+  likes: number;
+  comments: number;
+  caption: string;
+}
+
+function usePaintings() {
+  const [paintings, setPaintings] = useState<Painting[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchPaintings() {
+      try {
+        const res = await fetch(SHEET_API_URL, { redirect: "follow" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        // Support both array directly or { data: [...] } wrapper
+        const rows: any[] = Array.isArray(data) ? data : data.data ?? data.rows ?? [];
+
+        if (rows.length === 0) throw new Error("Empty response");
+
+        const mapped: Painting[] = rows.map((row: any, idx: number) => ({
+          id: Number(row.ID ?? row.id) || idx + 1,
+          url: row["Image URL"] ?? row.url ?? row.image ?? row.imageUrl ?? "",
+          title: row.Title ?? row.title ?? row.name ?? "Untitled",
+          medium: row.Medium ?? row.medium ?? "",
+          year: Number(row.Year ?? row.year) || new Date().getFullYear(),
+          likes: Number(String(row.Likes ?? row.likes ?? 0).replace(/,/g, "")) || 0,
+          comments: Number(String(row.Comments ?? row.comments ?? 0).replace(/,/g, "")) || 0,
+          caption: row.Caption ?? row.caption ?? "",
+        }));
+
+        if (!cancelled) {
+          setPaintings(mapped);
+          setLoading(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setPaintings([]);
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchPaintings();
+    return () => { cancelled = true; };
+  }, []);
+
+  return { paintings, loading };
+}
 
 function formatCount(n: number) {
   return n >= 1000 ? (n / 1000).toFixed(1) + "K" : String(n);
 }
 
 interface ModalProps {
-  painting: typeof paintings[0];
+  painting: Painting;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
@@ -285,16 +254,25 @@ function PaintingModal({ painting, onClose, onPrev, onNext, hasPrev, hasNext }: 
 }
 
 export function Gallery() {
+  const { paintings, loading } = usePaintings();
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
+  if (loading) {
+    return (
+      <div className="max-w-[935px] mx-auto flex items-center justify-center py-20">
+        <Loader2 size={32} className="animate-spin" style={{ color: "var(--muted-foreground)" }} />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-[935px] mx-auto">
-      <div className="grid grid-cols-3 gap-px" style={{ background: "var(--border)" }}>
+      <div className="grid grid-cols-3 gap-[2px] md:gap-1 stagger-fade" style={{ background: "var(--border)" }}>
         {paintings.map((p, i) => (
           <motion.div
             key={p.id}
-            className="relative cursor-pointer overflow-hidden"
+            className="relative cursor-pointer overflow-hidden painting-hover"
             style={{ aspectRatio: "1/1", background: "var(--muted)" }}
             onClick={() => setSelectedIdx(i)}
             onHoverStart={() => setHoveredId(p.id)}
@@ -303,8 +281,7 @@ export function Gallery() {
             <img
               src={p.url}
               alt={p.title}
-              className="w-full h-full object-cover transition-transform duration-300"
-              style={{ transform: hoveredId === p.id ? "scale(1.04)" : "scale(1)" }}
+              className="w-full h-full object-cover"
             />
             <AnimatePresence>
               {hoveredId === p.id && (
@@ -312,20 +289,32 @@ export function Gallery() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 flex items-center justify-center gap-6"
-                  style={{ background: "rgba(0,0,0,0.4)" }}
+                  className="absolute inset-0 flex flex-col items-center justify-center gap-2"
+                  style={{ background: "linear-gradient(135deg, rgba(0,0,0,0.6), rgba(139,92,246,0.3))" }}
                 >
-                  <div className="flex items-center gap-1.5" style={{ color: "#fff" }}>
-                    <Heart size={20} fill="#fff" />
-                    <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: "15px" }}>
-                      {formatCount(p.likes)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5" style={{ color: "#fff" }}>
-                    <MessageCircle size={20} fill="#fff" />
-                    <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: "15px" }}>
-                      {p.comments}
-                    </span>
+                  {/* Title overlay */}
+                  <motion.p
+                    initial={{ y: 8, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 8, opacity: 0 }}
+                    transition={{ delay: 0.05 }}
+                    style={{ fontFamily: "'DM Serif Display', serif", fontSize: "14px", color: "#fff", fontStyle: "italic", textAlign: "center", padding: "0 8px" }}
+                  >
+                    {p.title}
+                  </motion.p>
+                  <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-1.5" style={{ color: "#fff" }}>
+                      <Heart size={18} fill="#fff" />
+                      <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: "14px" }}>
+                        {formatCount(p.likes)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5" style={{ color: "#fff" }}>
+                      <MessageCircle size={18} fill="#fff" />
+                      <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: "14px" }}>
+                        {p.comments}
+                      </span>
+                    </div>
                   </div>
                 </motion.div>
               )}
