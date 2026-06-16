@@ -320,7 +320,8 @@ export default function App() {
             © 2026 Elena Rostova. Co-represented globally by Galerie de l'Élysée, Paris.
           </p>
           <p className="text-[9px] text-neutral-400 dark:text-neutral-600 font-mono uppercase tracking-[0.18em]">
-            Powered by Antigravity and Gemini Models. All original studies protected.
+            Powered by 
+            <a href="https://xervelab.online" className="ml-2 underline decoration-dotted" target="_blank" rel="noopener noreferrer">XerveLab Online</a>
           </p>
         </footer>
 
