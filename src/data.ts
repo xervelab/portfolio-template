@@ -3,7 +3,7 @@ import { ArtistProfile, Artwork, Exhibition, JournalPost } from "./types";
 export const artistProfile: ArtistProfile = {
   name: "Elena Rostova",
   username: "elena.rostova.studio",
-  avatarUrl: "/src/assets/images/artist_profile_1781577268845.jpg",
+  avatarUrl: "/images/artist_profile_1781577268845.jpg",
   tagline: "Contemporary Impressionist & Neo-Expressionist Painter",
   bio: "🎨 Exploring the boundary between sensory reality and mental expressionism. Capturing fleeting light, intense human emotion, and fluid ocean cadences. Represented by Galerie de l'Élysée & Nova Contemporary.\n📍 Based in Paris, France.\n✉️ Open for selective commissions.",
   categories: ["Impressionism", "Expressionism", "Abstract Art", "Watercolor"],
@@ -23,7 +23,7 @@ export const initialArtworks: Artwork[] = [
     year: "2026",
     dimensions: "120 × 120 cm",
     description: "An immersive, contemporary impressionist landscape of an ancient woodland during mid-autumn. Thick, deliberate palette knife strokes construct a canopy of gold, copper, and teal leaves. The filtering golden light aims to create an enveloping feeling of warmth and quiet reflection, focusing heavily on tactile impasto texture.",
-    imageUrl: "/src/assets/images/artwork_woodlands_1781577205679.jpg",
+    imageUrl: "/images/artwork_woodlands_1781577205679.jpg",
     likes: 1240,
     hasLiked: false,
     comments: [
@@ -56,7 +56,7 @@ export const initialArtworks: Artwork[] = [
     year: "2026",
     dimensions: "90 × 110 cm",
     description: "A rich neo-expressionist exploration of human contemplation. Expressive, dramatic strokes of bold indigo, deep maroon, and warm ochre shape the silhouette of a thoughtful figure. Designed to capture complex internal emotion rather than structural anatomy, painted on custom-primed coarse canvas.",
-    imageUrl: "/src/assets/images/artwork_portrait_1781577221411.jpg",
+    imageUrl: "/images/artwork_portrait_1781577221411.jpg",
     likes: 985,
     hasLiked: false,
     comments: [
@@ -82,7 +82,7 @@ export const initialArtworks: Artwork[] = [
     year: "2025",
     dimensions: "150 × 100 cm",
     description: "An expansively calm abstract landscape conveying the fluid meeting of oceanic waves and seaside mist. This piece utilizes gentle gradient flows of high-grade ultramarine pigment contrasted with embedded flakes of 24k gold leaf. The composition balances vast negative spaces with highly intense metallic points.",
-    imageUrl: "/src/assets/images/artwork_ocean_1781577235627.jpg",
+    imageUrl: "/images/artwork_ocean_1781577235627.jpg",
     likes: 1532,
     hasLiked: false,
     comments: [
@@ -108,7 +108,7 @@ export const initialArtworks: Artwork[] = [
     year: "2026",
     dimensions: "56 × 76 cm",
     description: "Created using delicate watercolor washes on heavy 640g rough Arches cotton paper. This minimalist illustration outlines wild grassland and white translucent poppies. The soft pigment bleed highlights natural dispersion, capturing the fragile yet resilient essence of spring flora.",
-    imageUrl: "/src/assets/images/artwork_floral_1781577250158.jpg",
+    imageUrl: "/images/artwork_floral_1781577250158.jpg",
     likes: 742,
     hasLiked: false,
     comments: [],
@@ -268,7 +268,7 @@ export const initialJournalPosts: JournalPost[] = [
     date: "June 10, 2026",
     excerpt: "Exploring the tactile nature of impasto and how I utilize custom wooden palette knives to shape shadows in 'Whispers of the Gilded Forest'.",
     content: "There's a specific kind of magic when oil paint is applied not just as pigment, but as a physical, dimensional form. In my latest series, I started experimenting with building thick layers using a mixture of stand-oil and heavy calcite powder to achieve high viscosity. Using thick, heavy, broad physical sweeps across the canvas lets me catch natural light of the gallery, making the painting change slightly depending on the hour of day you observe it. I focus strongly on creating dynamic shadows right on the canvas surface, mimicking actual tree barks and layers of autumn forest floor.",
-    imageUrl: "/src/assets/images/artwork_woodlands_1781577205679.jpg",
+    imageUrl: "/images/artwork_woodlands_1781577205679.jpg",
     likes: 148,
     readTime: "4 min read"
   },
@@ -278,7 +278,7 @@ export const initialJournalPosts: JournalPost[] = [
     date: "May 24, 2026",
     excerpt: "Reflecting on my three-week residency in Brittany, capturing dynamic wave crests using natural pigments and pure 24k gold leaf integration.",
     content: "The ocean is never the same color. It shifts continuously between deep prussian blues, turquoise, and misty grey. During my residency in Brittany, I decided to simplify my canvas structures, dedicating entire paintings to pure azure fields. I discovered that inserting delicate gold leaf directly into the high points of fluid acrylic mediums mirrors exactly the transient shimmer of sun rays on rolling waves. It feels deeply atmospheric, a silent chant of natural force and silent metal highlights.",
-    imageUrl: "/src/assets/images/artwork_ocean_1781577235627.jpg",
+    imageUrl: "/images/artwork_ocean_1781577235627.jpg",
     likes: 194,
     readTime: "6 min read"
   }

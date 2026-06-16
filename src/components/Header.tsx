@@ -66,7 +66,7 @@ const HIGHLIGHTS: Highlight[] = [
         caption: "Charcoal underdrawings before the paint glazes settle. The foundation."
       },
       {
-        url: "/src/assets/images/artwork_woodlands_1781577205679.jpg",
+        url: "/images/artwork_woodlands_1781577205679.jpg",
         type: "image",
         caption: "Finishing touches on the Gilded Forest woodland canopy using a heavy trowel."
       }
