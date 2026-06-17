@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { MapPin, Calendar, Award, Compass, Eye, Heart } from "lucide-react";
 import { motion } from "motion/react";
-import { ARTIST_INFO, EXHIBITIONS_DATA } from "../data";
+import type { SiteData, ExhibitionData } from "../hooks/useSheetData";
 
-export default function About() {
+interface AboutProps {
+  site: SiteData;
+  exhibitions: ExhibitionData[];
+}
+
+export default function About({ site, exhibitions }: AboutProps) {
   const [activeTab, setActiveTab] = useState<"all" | "solo" | "group">("all");
 
-  const filteredExhibitions = EXHIBITIONS_DATA.filter((ex) => {
+  const filteredExhibitions = exhibitions.filter((ex) => {
     if (activeTab === "all") return true;
     return ex.type.toLowerCase() === activeTab;
   });
@@ -34,8 +39,8 @@ export default function About() {
                 {/* Studio Portrait Frame */}
                 <div className="relative overflow-hidden aspect-[4/5] bg-stone-100 border border-stone-900/10 dark:border-white/10 rounded-none shadow-sm">
                   <img
-                    src={ARTIST_INFO.portraitUrl}
-                    alt={ARTIST_INFO.name}
+                    src={site.aboutImageUrl}
+                    alt={site.brandName}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover grayscale-[35%] hover:grayscale-0 transition-all duration-[1500ms] ease-out"
                   />
@@ -59,19 +64,20 @@ export default function About() {
             >
               <div className="space-y-3 border-b border-stone-900/10 dark:border-white/10 pb-6">
                 <span className="font-sans text-[10px] tracking-[0.35em] text-brand-accent uppercase block font-semibold">
-                  The Artist
+                  {site.aboutLabel}
                 </span>
                 <h2 className="font-serif text-4xl md:text-5xl font-light text-stone-950 dark:text-stone-50 tracking-tight leading-none">
-                  Crafting Silent Landscapes of the Human Mind
+                  {site.aboutHeading}
                 </h2>
               </div>
 
               <div className="space-y-6 text-stone-700 dark:text-stone-300 text-sm md:text-base leading-relaxed font-light">
-                <p>{ARTIST_INFO.bio}</p>
+                <p>{site.aboutBio1}</p>
+                <p>{site.aboutBio2}</p>
                 
                 {/* Visual quote container */}
                 <div className="border-l border-brand-accent pl-6 py-2 italic text-stone-950 dark:text-stone-100 font-serif text-lg leading-relaxed bg-stone-900/5 dark:bg-white/5 pr-4">
-                  "{ARTIST_INFO.statement}"
+                  "{site.aboutBio3}"
                 </div>
               </div>
 

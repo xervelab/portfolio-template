@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Sun, Moon, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import type { SiteData } from "../hooks/useSheetData";
 
 interface NavbarProps {
   isDark: boolean;
   setIsDark: (dark: boolean) => void;
   activeSection: string;
+  site: SiteData;
 }
 
-export default function Navbar({ isDark, setIsDark, activeSection }: NavbarProps) {
+export default function Navbar({ isDark, setIsDark, activeSection, site }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -56,7 +58,7 @@ export default function Navbar({ isDark, setIsDark, activeSection }: NavbarProps
           className="group flex flex-col items-start"
         >
           <span className="font-serif text-xl md:text-2xl font-light tracking-[0.25em] text-stone-950 dark:text-stone-50 transition-colors uppercase">
-            ELENA ROSTOVA
+            {site.brandName}
           </span>
           <span className="font-sans text-[8px] md:text-[9px] tracking-[0.45em] text-stone-400 dark:text-stone-500 uppercase font-light mt-0.5">
             FINE ARTIST

@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Mail, MapPin, Send, CheckCircle2, RefreshCw, Smartphone } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ContactFormData } from "../types";
+import type { SiteData } from "../hooks/useSheetData";
 
 interface ContactProps {
   artworkInquiryTitle: string;
+  site: SiteData;
 }
 
-export default function Contact({ artworkInquiryTitle }: ContactProps) {
+export default function Contact({ artworkInquiryTitle, site }: ContactProps) {
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -95,10 +97,10 @@ export default function Contact({ artworkInquiryTitle }: ContactProps) {
           >
             <div className="space-y-3 border-b border-stone-900/10 dark:border-white/10 pb-6">
               <span className="font-sans text-[10px] tracking-[0.35em] text-brand-accent uppercase block font-semibold">
-                Inquiries & Acquisitions
+                {site.contactLabel}
               </span>
               <h2 className="font-serif text-4xl md:text-5xl font-light text-stone-950 dark:text-stone-50 tracking-tight leading-none">
-                Connect with the Studio
+                {site.contactTitle}
               </h2>
             </div>
 
@@ -117,10 +119,10 @@ export default function Contact({ artworkInquiryTitle }: ContactProps) {
                     Direct Email
                   </h4>
                   <a
-                    href="mailto:studio@elenarostova.com"
+                    href={`mailto:${site.email}`}
                     className="text-stone-950 dark:text-stone-50 text-sm hover:text-brand-accent transition-colors block font-medium mt-0.5"
                   >
-                    studio@elenarostova.com
+                    {site.email}
                   </a>
                 </div>
               </div>
@@ -134,8 +136,7 @@ export default function Contact({ artworkInquiryTitle }: ContactProps) {
                     Primary Studio
                   </h4>
                   <p className="text-stone-950 dark:text-stone-50 text-sm font-medium mt-0.5">
-                    DUMBO Creative Studios, Suite 402<br />
-                    Brooklyn, NY 11201
+                    {site.studioAddress}
                   </p>
                 </div>
               </div>
@@ -158,7 +159,7 @@ export default function Contact({ artworkInquiryTitle }: ContactProps) {
             <div className="w-full h-[1px] bg-stone-900/10 dark:bg-white/10 pt-2"></div>
 
             <div className="text-[10px] font-mono text-stone-400 dark:text-stone-500 leading-relaxed italic">
-              Please expect up to 48 hours for studio responses. High-end custom canvas commissions typically require 6-12 weeks for completion.
+              {site.responseNote}
             </div>
           </motion.div>
 

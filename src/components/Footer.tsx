@@ -1,8 +1,13 @@
 import React from "react";
 import { ArrowUp, Instagram, Grid, Layout, Award, Compass, Sparkles, Heart } from "lucide-react";
-import { SOCIAL_LINKS } from "../data";
+import type { SiteData, SocialLink } from "../hooks/useSheetData";
 
-export default function Footer() {
+interface FooterProps {
+  site: SiteData;
+  socials: SocialLink[];
+}
+
+export default function Footer({ site, socials }: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -16,7 +21,7 @@ export default function Footer() {
           <div className="md:col-span-5 space-y-6">
             <div className="space-y-1">
               <span className="font-serif text-lg tracking-[0.2em] font-medium text-stone-950 dark:text-stone-50 uppercase">
-                ELENA ROSTOVA
+                {site.brandName}
               </span>
               <p className="font-sans text-[10px] tracking-[0.4em] uppercase text-stone-400 dark:text-stone-500 font-light">
                 FINE ART STUDIO
@@ -35,7 +40,7 @@ export default function Footer() {
             </h4>
             
             <div className="grid grid-cols-2 gap-4">
-              {SOCIAL_LINKS.map(link => (
+              {socials.map(link => (
                 <a
                   key={link.name}
                   href={link.url}
@@ -80,7 +85,7 @@ export default function Footer() {
         {/* Copyright notice and metadata credentials */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 font-sans text-[10px] text-stone-400 dark:text-stone-500">
           <div>
-            &copy; {new Date().getFullYear()} Elena Rostova Art. All rights reserved.
+            {site.copyright}
           </div>
           <div className="flex items-center gap-1.5 font-light">
             Made with <Heart className="w-2.5 h-2.5 text-brand-accent fill-brand-accent" /> in modern workspace

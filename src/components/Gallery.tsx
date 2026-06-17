@@ -1,24 +1,25 @@
 import React, { useState } from "react";
 import { Maximize2, X, ChevronLeft, ChevronRight, MessageSquareCode, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { ARTWORKS_DATA } from "../data";
-import { Artwork } from "../types";
+import type { ArtworkData, SiteData } from "../hooks/useSheetData";
 
 interface GalleryProps {
   onInquireAboutArtwork: (title: string) => void;
+  artworks: ArtworkData[];
+  site: SiteData;
 }
 
-export default function Gallery({ onInquireAboutArtwork }: GalleryProps) {
+export default function Gallery({ onInquireAboutArtwork, artworks, site }: GalleryProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  const categories = ["All", "Abstract Oil", "Watercolor", "Contemporary"];
+  const categories = ["All", ...Array.from(new Set(artworks.map((art) => art.category).filter(Boolean)))];
 
   // Filter artworks based on category
   const filteredArtworks = selectedCategory === "All"
-    ? ARTWORKS_DATA
-    : ARTWORKS_DATA.filter(art => art.category === selectedCategory);
+    ? artworks
+    : artworks.filter(art => art.category === selectedCategory);
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -28,7 +29,7 @@ export default function Gallery({ onInquireAboutArtwork }: GalleryProps) {
   };
 
   const openLightbox = (id: string) => {
-    const index = ARTWORKS_DATA.findIndex(art => art.id === id);
+    const index = artworks.findIndex(art => art.id === id);
     if (index !== -1) {
       setLightboxIndex(index);
     }
@@ -36,21 +37,21 @@ export default function Gallery({ onInquireAboutArtwork }: GalleryProps) {
 
   const handlePrev = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (lightboxIndex !== null) {
-      const idx = (lightboxIndex - 1 + ARTWORKS_DATA.length) % ARTWORKS_DATA.length;
+    if (lightboxIndex !== null && artworks.length > 0) {
+      const idx = (lightboxIndex - 1 + artworks.length) % artworks.length;
       setLightboxIndex(idx);
     }
   };
 
   const handleNext = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (lightboxIndex !== null) {
-      const idx = (lightboxIndex + 1) % ARTWORKS_DATA.length;
+    if (lightboxIndex !== null && artworks.length > 0) {
+      const idx = (lightboxIndex + 1) % artworks.length;
       setLightboxIndex(idx);
     }
   };
 
-  const currentLightboxArt = lightboxIndex !== null ? ARTWORKS_DATA[lightboxIndex] : null;
+  const currentLightboxArt = lightboxIndex !== null ? artworks[lightboxIndex] : null;
 
   return (
     <section id="gallery" className="py-24 md:py-32 bg-[#FAF9F6] dark:bg-[#0F0F0F] border-b border-stone-900/10 dark:border-white/10 transition-colors duration-300">
@@ -60,10 +61,10 @@ export default function Gallery({ onInquireAboutArtwork }: GalleryProps) {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 space-y-6 md:space-y-0 border-b border-stone-900/10 dark:border-white/10 pb-8">
           <div className="space-y-3">
             <span className="font-sans text-[10px] tracking-[0.35em] text-brand-accent uppercase block font-semibold">
-              Curated Gallery
+              {site.galleryLabel}
             </span>
             <h2 className="font-serif text-4xl md:text-5xl font-light text-stone-950 dark:text-stone-50 tracking-tight leading-none">
-              Selected Artworks
+              {site.galleryTitle}
             </h2>
           </div>
 
