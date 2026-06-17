@@ -1,32 +1,28 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Send, Instagram, Facebook } from "lucide-react";
+import { Send, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe } from "lucide-react";
+import { type SiteData, type SocialLink } from "../hooks/useSheetData";
 
-const socialLinks = [
-  {
-    name: "Instagram",
-    handle: "@elenavasquez.art",
-    href: "https://instagram.com",
-    icon: Instagram,
-  },
-  {
-    name: "Facebook",
-    handle: "Elena Vasquez Studio",
-    href: "https://facebook.com",
-    icon: Facebook,
-  },
-  {
-    name: "Behance",
-    handle: "elena-vasquez",
-    href: "https://behance.net",
-    // custom SVG icon inline
-    icon: null,
-  },
-];
+function getSocialIcon(iconName: string) {
+  const map: Record<string, any> = {
+    instagram: Instagram,
+    facebook: Facebook,
+    twitter: Twitter,
+    linkedin: Linkedin,
+    youtube: Youtube,
+    globe: Globe,
+  };
+  return map[iconName.toLowerCase()] || null;
+}
+
+interface ContactProps {
+  site: SiteData;
+  socials: SocialLink[];
+}
 
 type FormState = "idle" | "submitting" | "sent";
 
-export function Contact() {
+export function Contact({ site, socials }: ContactProps) {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [state, setState] = useState<FormState>("idle");
 
@@ -50,12 +46,12 @@ export function Contact() {
           transition={{ duration: 0.7 }}
           className="mb-16"
         >
-          <p className="font-['DM_Mono'] text-[#c9a96e] text-xs tracking-[0.3em] uppercase mb-4">Get in Touch</p>
+          <p className="font-['DM_Mono'] text-[#c9a96e] text-xs tracking-[0.3em] uppercase mb-4">{site.contactLabel}</p>
           <h2
             className="font-['Playfair_Display'] text-[#f0ebe3] leading-tight"
             style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 400 }}
           >
-            Let's make something together.
+            {site.contactTitle}
           </h2>
         </motion.div>
 
@@ -154,55 +150,55 @@ export function Contact() {
           >
             <div>
               <p className="font-['DM_Mono'] text-[#9c8e7e] text-xs tracking-widest uppercase mb-4">Studio</p>
-              <p className="font-['DM_Sans'] text-[#f0ebe3] text-sm leading-relaxed" style={{ fontWeight: 300 }}>
-                Carrer de Pallars 193<br />
-                08005 Barcelona<br />
-                Spain
+              <p className="font-['DM_Sans'] text-[#f0ebe3] text-sm leading-relaxed whitespace-pre-line" style={{ fontWeight: 300 }}>
+                {site.studioAddress}
               </p>
             </div>
             <div>
               <p className="font-['DM_Mono'] text-[#9c8e7e] text-xs tracking-widest uppercase mb-4">Email</p>
               <a
-                href="mailto:studio@elenavasquez.art"
+                href={`mailto:${site.email}`}
                 className="font-['DM_Sans'] text-[#c9a96e] text-sm hover:text-[#e0c080] transition-colors"
               >
-                studio@elenavasquez.art
+                {site.email}
               </a>
             </div>
 
             <div>
               <p className="font-['DM_Mono'] text-[#9c8e7e] text-xs tracking-widest uppercase mb-5">Follow</p>
               <div className="space-y-4">
-                {socialLinks.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 group"
-                  >
-                    <div className="w-9 h-9 border border-[rgba(201,169,110,0.2)] flex items-center justify-center text-[#9c8e7e] group-hover:border-[#c9a96e] group-hover:text-[#c9a96e] transition-colors duration-300">
-                      {link.icon ? (
-                        <link.icon size={16} />
-                      ) : (
-                        <span className="font-['DM_Mono'] text-xs">Be</span>
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-['DM_Sans'] text-[#f0ebe3] text-sm group-hover:text-[#c9a96e] transition-colors duration-300" style={{ fontWeight: 400 }}>
-                        {link.name}
-                      </p>
-                      <p className="font-['DM_Mono'] text-[#9c8e7e] text-xs">{link.handle}</p>
-                    </div>
-                  </a>
-                ))}
+                {socials.map((link) => {
+                  const IconComponent = getSocialIcon(link.icon);
+                  return (
+                    <a
+                      key={link.name}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-4 group"
+                    >
+                      <div className="w-9 h-9 border border-[rgba(201,169,110,0.2)] flex items-center justify-center text-[#9c8e7e] group-hover:border-[#c9a96e] group-hover:text-[#c9a96e] transition-colors duration-300">
+                        {IconComponent ? (
+                          <IconComponent size={16} />
+                        ) : (
+                          <span className="font-['DM_Mono'] text-xs">{link.name.slice(0, 2)}</span>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-['DM_Sans'] text-[#f0ebe3] text-sm group-hover:text-[#c9a96e] transition-colors duration-300" style={{ fontWeight: 400 }}>
+                          {link.name}
+                        </p>
+                        <p className="font-['DM_Mono'] text-[#9c8e7e] text-xs">{link.handle}</p>
+                      </div>
+                    </a>
+                  );
+                })}
               </div>
             </div>
 
             <div className="border-t border-[rgba(201,169,110,0.15)] pt-8">
               <p className="font-['DM_Sans'] text-[#9c8e7e] text-xs leading-relaxed" style={{ fontWeight: 300 }}>
-                Commission inquiries typically receive a response within 2–3 working days.
-                Studio visits are by appointment only.
+                {site.responseNote}
               </p>
             </div>
           </motion.div>

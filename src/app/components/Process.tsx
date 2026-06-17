@@ -1,29 +1,13 @@
 import { motion } from "motion/react";
+import { type ProcessStep, type StudioImage, type SiteData } from "../hooks/useSheetData";
 
-const steps = [
-  {
-    number: "01",
-    title: "Inquiry",
-    body: "We begin with a conversation — in person, by email, or over video. I want to understand what you're drawn to, the space the work will inhabit, and whether my vocabulary feels right for what you're imagining.",
-  },
-  {
-    number: "02",
-    title: "Concept",
-    body: "I develop a loose proposal: palette, scale, feeling. Not a tight sketch — I work from intuition, not formula. You'll receive a moodboard and material notes to respond to.",
-  },
-  {
-    number: "03",
-    title: "Making",
-    body: "Commissions typically take 6–10 weeks. I document progress in my studio journal and share photographs at key stages. Painting requires time to dry, to think, sometimes to start again.",
-  },
-  {
-    number: "04",
-    title: "Delivery",
-    body: "Works are varnished and delivered flat or rolled, with a signed certificate of authenticity. I ship internationally through a specialist fine-art courier.",
-  },
-];
+interface ProcessProps {
+  steps: ProcessStep[];
+  studioImages: StudioImage[];
+  site: SiteData;
+}
 
-export function Process() {
+export function Process({ steps, studioImages, site }: ProcessProps) {
   return (
     <section id="process" className="py-32 px-6 bg-[#0f0d0b]">
       <div className="max-w-7xl mx-auto">
@@ -34,12 +18,12 @@ export function Process() {
           transition={{ duration: 0.7 }}
           className="mb-20"
         >
-          <p className="font-['DM_Mono'] text-[#c9a96e] text-xs tracking-[0.3em] uppercase mb-4">Commission Process</p>
+          <p className="font-['DM_Mono'] text-[#c9a96e] text-xs tracking-[0.3em] uppercase mb-4">{site.processLabel}</p>
           <h2
             className="font-['Playfair_Display'] text-[#f0ebe3] leading-tight max-w-xl"
             style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 400 }}
           >
-            How a commission works
+            {site.processTitle}
           </h2>
         </motion.div>
 
@@ -75,14 +59,10 @@ export function Process() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="mt-20 grid grid-cols-3 gap-1 h-48 md:h-72 overflow-hidden"
         >
-          {[
-            "https://images.unsplash.com/photo-1649479435119-1d987ed1ae36?w=600&h=400&fit=crop&auto=format",
-            "https://images.unsplash.com/photo-1580493113011-ad79f792a7c2?w=600&h=400&fit=crop&auto=format",
-            "https://images.unsplash.com/photo-1568448705245-1250489bcd66?w=600&h=400&fit=crop&auto=format",
-          ].map((src, i) => (
+          {studioImages.map((img, i) => (
             <div key={i} className="overflow-hidden bg-[#1a1714]">
               <img
-                src={src}
+                src={img.url}
                 alt="Studio detail"
                 className="w-full h-full object-cover opacity-60 hover:opacity-90 transition-opacity duration-500 scale-105 hover:scale-100"
                 style={{ transition: "opacity 0.5s, transform 0.7s" }}

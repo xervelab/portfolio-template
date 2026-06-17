@@ -1,10 +1,12 @@
 import { motion } from "motion/react";
+import { type SiteData } from "../hooks/useSheetData";
 
 interface HeroProps {
   onNavigate: (section: string) => void;
+  site: SiteData;
 }
 
-export function Hero({ onNavigate }: HeroProps) {
+export function Hero({ onNavigate, site }: HeroProps) {
   return (
     <section
       id="hero"
@@ -16,7 +18,7 @@ export function Hero({ onNavigate }: HeroProps) {
       {/* Background image — artist in studio */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1541753866388-0b3c701627d3?w=1800&h=1200&fit=crop&auto=format"
+          src={site.heroImageUrl}
           alt="Artist at work in studio"
           className="w-full h-full object-cover opacity-20"
         />
@@ -34,7 +36,7 @@ export function Hero({ onNavigate }: HeroProps) {
             transition={{ delay: 0.2, duration: 0.7 }}
             className="font-['DM_Mono'] text-[#c9a96e] text-xs tracking-[0.3em] uppercase mb-8"
           >
-            Painter · Barcelona, Spain
+            {site.tagline}
           </motion.p>
 
           <motion.h1
@@ -43,13 +45,8 @@ export function Hero({ onNavigate }: HeroProps) {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="font-['Playfair_Display'] text-[#f0ebe3] leading-[1.1] mb-6"
             style={{ fontSize: "clamp(3rem, 8vw, 6.5rem)", fontWeight: 400 }}
-          >
-            Where emotion
-            <br />
-            <em className="text-[#c9a96e]">becomes</em>
-            <br />
-            canvas.
-          </motion.h1>
+            dangerouslySetInnerHTML={{ __html: site.heroSubtitle }}
+          />
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -58,8 +55,7 @@ export function Hero({ onNavigate }: HeroProps) {
             className="font-['DM_Sans'] text-[#9c8e7e] text-lg leading-relaxed mb-12 max-w-md"
             style={{ fontWeight: 300 }}
           >
-            Oil and mixed-media works that sit between figuration and abstraction —
-            exploring memory, longing, and the Spanish light.
+            {site.heroDescription}
           </motion.p>
 
           <motion.div
@@ -73,14 +69,14 @@ export function Hero({ onNavigate }: HeroProps) {
               className="font-['DM_Sans'] text-sm tracking-widest uppercase px-8 py-4 bg-[#c9a96e] text-[#0f0d0b] hover:bg-[#e0c080] transition-colors duration-300"
               style={{ fontWeight: 500 }}
             >
-              View Work
+              {site.heroCta1}
             </button>
             <button
               onClick={() => onNavigate("contact")}
               className="font-['DM_Sans'] text-sm tracking-widest uppercase px-8 py-4 border border-[#c9a96e]/40 text-[#c9a96e] hover:border-[#c9a96e] hover:bg-[#c9a96e]/10 transition-all duration-300"
               style={{ fontWeight: 500 }}
             >
-              Commission a Piece
+              {site.heroCta2}
             </button>
           </motion.div>
         </div>

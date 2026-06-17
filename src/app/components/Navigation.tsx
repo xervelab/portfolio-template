@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X } from "lucide-react";
+import { type SiteData } from "../hooks/useSheetData";
 
 interface NavigationProps {
   activeSection: string;
   onNavigate: (section: string) => void;
+  site: SiteData;
 }
 
 const navItems = ["Work", "About", "Process", "Contact"];
 
-export function Navigation({ activeSection, onNavigate }: NavigationProps) {
+export function Navigation({ activeSection, onNavigate, site }: NavigationProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -39,7 +41,7 @@ export function Navigation({ activeSection, onNavigate }: NavigationProps) {
             onClick={() => handleNav("hero")}
             className="font-['Playfair_Display'] text-[#f0ebe3] tracking-widest text-sm uppercase hover:text-[#c9a96e] transition-colors duration-300"
           >
-            Elena Vasquez
+            {site.brandName}
           </button>
 
           {/* Desktop nav */}

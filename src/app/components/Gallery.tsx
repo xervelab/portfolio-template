@@ -1,105 +1,23 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { type ArtworkData, type SiteData } from "../hooks/useSheetData";
 
-const categories = ["All", "Oil", "Mixed Media", "Studies"];
+interface GalleryProps {
+  artworks: ArtworkData[];
+  site: SiteData;
+}
 
-const works = [
-  {
-    id: 1,
-    title: "Umbra I",
-    year: "2024",
-    medium: "Oil on linen",
-    size: "120 × 90 cm",
-    category: "Oil",
-    available: false,
-    img: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?w=900&h=1200&fit=crop&auto=format",
-    description: "A study in the space between light and shadow. Deep burgundy grounds anchor fragments of translucent ochre.",
-  },
-  {
-    id: 2,
-    title: "Residue",
-    year: "2024",
-    medium: "Oil on canvas",
-    size: "80 × 100 cm",
-    category: "Oil",
-    available: true,
-    img: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900&h=1200&fit=crop&auto=format",
-    description: "What remains after memory fades. Layers of built-up paint reveal history beneath.",
-  },
-  {
-    id: 3,
-    title: "First Light, Cadaqués",
-    year: "2023",
-    medium: "Oil on board",
-    size: "60 × 45 cm",
-    category: "Oil",
-    available: true,
-    img: "https://images.unsplash.com/photo-1618331833071-ce81bd50d300?w=900&h=1200&fit=crop&auto=format",
-    description: "Dawn over the Costa Brava. Painted en plein air over three mornings.",
-  },
-  {
-    id: 4,
-    title: "Field Notes IV",
-    year: "2023",
-    medium: "Mixed media",
-    size: "50 × 70 cm",
-    category: "Mixed Media",
-    available: true,
-    img: "https://images.unsplash.com/photo-1704291826947-a30746a14739?w=900&h=1200&fit=crop&auto=format",
-    description: "Collaged newspaper, beeswax, and oil. Texts become texture.",
-  },
-  {
-    id: 5,
-    title: "Interior (Red Study)",
-    year: "2023",
-    medium: "Oil on canvas",
-    size: "100 × 100 cm",
-    category: "Studies",
-    available: false,
-    img: "https://images.unsplash.com/photo-1533208087231-c3618eab623c?w=900&h=900&fit=crop&auto=format",
-    description: "Part of an ongoing series examining domestic interiors as emotional landscapes.",
-  },
-  {
-    id: 6,
-    title: "Dissolution",
-    year: "2022",
-    medium: "Oil and cold wax",
-    size: "90 × 120 cm",
-    category: "Mixed Media",
-    available: false,
-    img: "https://images.unsplash.com/photo-1533157950006-c38844053d55?w=900&h=1200&fit=crop&auto=format",
-    description: "Form loosening into ground. A conversation between intention and accident.",
-  },
-  {
-    id: 7,
-    title: "Study for Umbra III",
-    year: "2024",
-    medium: "Oil on paper",
-    size: "30 × 40 cm",
-    category: "Studies",
-    available: true,
-    img: "https://images.unsplash.com/photo-1531489956451-20957fab52f2?w=900&h=1200&fit=crop&auto=format",
-    description: "Working study exploring tonal range before committing to the larger canvas.",
-  },
-  {
-    id: 8,
-    title: "Verdure",
-    year: "2022",
-    medium: "Oil on linen",
-    size: "70 × 90 cm",
-    category: "Oil",
-    available: true,
-    img: "https://images.unsplash.com/photo-1618331835717-801e976710b2?w=900&h=1200&fit=crop&auto=format",
-    description: "Overgrown garden after rain. Greens verging on grey.",
-  },
-];
+export function Gallery({ artworks, site }: GalleryProps) {
+  const categories = useMemo(() => {
+    const cats = Array.from(new Set(artworks.map((w) => w.category).filter(Boolean)));
+    return ["All", ...cats];
+  }, [artworks]);
 
-export function Gallery() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const filtered = activeCategory === "All" ? works : works.filter((w) => w.category === activeCategory);
+  const filtered = activeCategory === "All" ? artworks : artworks.filter((w) => w.category === activeCategory);
 
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
@@ -117,10 +35,10 @@ export function Gallery() {
           transition={{ duration: 0.7 }}
           className="mb-16"
         >
-          <p className="font-['DM_Mono'] text-[#c9a96e] text-xs tracking-[0.3em] uppercase mb-4">Selected Works</p>
+          <p className="font-['DM_Mono'] text-[#c9a96e] text-xs tracking-[0.3em] uppercase mb-4">{site.galleryLabel}</p>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
             <h2 className="font-['Playfair_Display'] text-[#f0ebe3] leading-tight" style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 400 }}>
-              The Work
+              {site.galleryTitle}
             </h2>
             {/* Category filter */}
             <div className="flex flex-wrap gap-3">
