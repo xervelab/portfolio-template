@@ -1,0 +1,6 @@
+{
+  "name": "Virtual Assistant Portfolio",
+  "description": "An ultra-modern, aesthetic, luxury-inspired Virtual Assistant portfolio website mapped dynamically to google sheets data.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
