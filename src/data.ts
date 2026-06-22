@@ -1,5 +1,7 @@
-import { ServicePackage, Skill, Project, Testimonial } from "./types";
+import { ServicePackage, Skill, Project, Testimonial, Profile } from "./types";
+import { loadServices, loadSkills, loadProjects, loadTestimonials, loadTimeSlots, loadProfile } from "./services/sheets";
 
+// Static fallback data (used if Google Sheets fails to load)
 export const SERVICES: ServicePackage[] = [
   {
     id: "admin-calm",
@@ -197,3 +199,67 @@ export const TIME_SLOTS: string[] = [
   "03:30 PM - 04:00 PM",
   "04:15 PM - 04:45 PM"
 ];
+
+export const PROFILE: Profile = {
+  name: "Celeste Vance",
+  title: "Creative Operations & System Architect",
+  portfolioLabel: "Celeste Vance / Portfolio",
+  heroEyebrow: "High-Performance Assistance",
+  heroTitleLine1: "Digital",
+  heroTitleLine2: "Concierge & Ops",
+  bio: "Hi, I'm Celeste. Bringing high-fidelity structure, aesthetic calm, and seamless automation to scaling creative directors, coaches, and luxury boutique agencies. I architect relational workspaces, triage inbox chaos, and keep your publishing consistent.",
+  metric1Value: "6+ Years",
+  metric1Label: "Dedicated Support",
+  metric2Value: "120+ Systems",
+  metric2Label: "Launched & Automated",
+  metric3Value: "350k+ Hours",
+  metric3Label: "Reclaimed for Clients",
+  locationBadge: "Based in Europe & Remote",
+  profileBadge: "Principal VA",
+  quote: "I construct workflows that allow creative leaders to trade operational anxiety for structured space to innovate.",
+  statusText: "Accepting Clients",
+  statusSubtext: "Servicing creative directors, designers, and scaling coaches globally.",
+  footerTagline: "Celeste Vance / Digital Operations",
+  footerLocation: "Based in Paris & Serving Clients Globally",
+  copyright: "© 2026 Celeste Vance. Meticulously Structured.",
+  linkedinUrl: "https://linkedin.com",
+  instagramUrl: "https://instagram.com",
+  substackUrl: "https://substack.com"
+};
+
+/**
+ * Async data loading functions for Google Sheets integration.
+ * These load data directly from Google Sheets. Errors are not swallowed —
+ * if a sheet fails to load, the error propagates to the caller.
+ */
+
+export async function getProfile(): Promise<Profile> {
+  const loaded = await loadProfile();
+  // Merge loaded values over defaults so any missing keys are filled in
+  return {
+    ...PROFILE,
+    ...Object.fromEntries(
+      Object.entries(loaded).filter(([, v]) => v !== undefined && v !== "")
+    ),
+  };
+}
+
+export async function getServices(): Promise<ServicePackage[]> {
+  return loadServices();
+}
+
+export async function getSkills(): Promise<Skill[]> {
+  return loadSkills();
+}
+
+export async function getProjects(): Promise<Project[]> {
+  return loadProjects();
+}
+
+export async function getTestimonials(): Promise<Testimonial[]> {
+  return loadTestimonials();
+}
+
+export async function getTimeSlots(): Promise<string[]> {
+  return loadTimeSlots();
+}

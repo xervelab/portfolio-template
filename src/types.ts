@@ -67,3 +67,30 @@ export interface TimeSlot {
   time: string;
   available: boolean;
 }
+
+export interface Profile {
+  name: string;
+  title: string;
+  portfolioLabel: string;
+  heroEyebrow: string;
+  heroTitleLine1: string;
+  heroTitleLine2: string;
+  bio: string;
+  metric1Value: string;
+  metric1Label: string;
+  metric2Value: string;
+  metric2Label: string;
+  metric3Value: string;
+  metric3Label: string;
+  locationBadge: string;
+  profileBadge: string;
+  quote: string;
+  statusText: string;
+  statusSubtext: string;
+  footerTagline: string;
+  footerLocation: string;
+  copyright: string;
+  linkedinUrl: string;
+  instagramUrl: string;
+  substackUrl: string;
+}

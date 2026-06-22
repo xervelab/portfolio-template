@@ -21,18 +21,38 @@ import {
   FileText,
   Workflow
 } from "lucide-react";
-import { SERVICES, SKILLS, PORTFOLIO_PROJECTS, TESTIMONIALS, TIME_SLOTS } from "./data";
-import { ServicePackage, Skill, Project, Testimonial, Message, Booking } from "./types";
+import { 
+  SERVICES as DEFAULT_SERVICES,
+  SKILLS as DEFAULT_SKILLS,
+  PORTFOLIO_PROJECTS as DEFAULT_PROJECTS,
+  TESTIMONIALS as DEFAULT_TESTIMONIALS,
+  TIME_SLOTS as DEFAULT_TIME_SLOTS,
+  PROFILE as DEFAULT_PROFILE,
+  getProfile,
+  getServices,
+  getSkills,
+  getProjects,
+  getTestimonials,
+  getTimeSlots
+} from "./data";
+import { ServicePackage, Skill, Project, Testimonial, Message, Booking, Profile } from "./types";
 import profileImage from "./assets/images/celeste_vance_1781580296306.jpg";
 
 export default function App() {
   // Navigation / Scroll high-level highlights
   const [activeTab, setActiveTab] = useState<string>("all");
+  const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
+  const [services, setServices] = useState<ServicePackage[]>(DEFAULT_SERVICES);
+  const [skills, setSkills] = useState<Skill[]>(DEFAULT_SKILLS);
+  const [projects, setProjects] = useState<Project[]>(DEFAULT_PROJECTS);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(DEFAULT_TESTIMONIALS);
+  const [timeSlots, setTimeSlots] = useState<string[]>(DEFAULT_TIME_SLOTS);
+  const [loadingData, setLoadingData] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  const [selectedService, setSelectedService] = useState<ServicePackage>(SERVICES[1]); // Default to "Creative Support"
+  const [selectedService, setSelectedService] = useState<ServicePackage>(DEFAULT_SERVICES[1]); // Default to "Creative Support"
   
   // Custom Reviews Dynamic State
-  const [reviews, setReviews] = useState<Testimonial[]>(TESTIMONIALS);
+  const [reviews, setReviews] = useState<Testimonial[]>(DEFAULT_TESTIMONIALS);
   const [newReviewName, setNewReviewName] = useState("");
   const [newReviewRole, setNewReviewRole] = useState("");
   const [newReviewCompany, setNewReviewCompany] = useState("");
@@ -47,7 +67,7 @@ export default function App() {
   // Booking System State
   const [bookingName, setBookingName] = useState("");
   const [bookingEmail, setBookingEmail] = useState("");
-  const [bookingService, setBookingService] = useState<string>(SERVICES[1].id);
+  const [bookingService, setBookingService] = useState<string>(DEFAULT_SERVICES[1].id);
   const [bookingDate, setBookingDate] = useState<string>("2026-06-18"); // default upcoming date
   const [bookingTimeSlot, setBookingTimeSlot] = useState<string>("");
   const [bookingNotes, setBookingNotes] = useState("");
@@ -76,8 +96,50 @@ export default function App() {
     { label: "What custom automations can you set up?", query: "Can you detail how you integrate Honeybook, Zapier, and Slack for design firms?" }
   ];
 
+  /**
+   * Load data from Google Sheets on component mount
+   */
+  useEffect(() => {
+    const loadAllData = async () => {
+      setLoadingData(true);
+      try {
+        const [loadedProfile, loadedServices, loadedSkills, loadedProjects, loadedTestimonials, loadedTimeSlots] = await Promise.all([
+          getProfile(),
+          getServices(),
+          getSkills(),
+          getProjects(),
+          getTestimonials(),
+          getTimeSlots()
+        ]);
+
+        setProfile(loadedProfile);
+        setServices(loadedServices);
+        setSkills(loadedSkills);
+        setProjects(loadedProjects);
+        setTestimonials(loadedTestimonials);
+        setReviews(loadedTestimonials);
+        setTimeSlots(loadedTimeSlots);
+
+        // Update selected service and booking service to use loaded data
+        if (loadedServices.length > 1) {
+          setSelectedService(loadedServices[1]);
+          setBookingService(loadedServices[1].id);
+        }
+      } catch (error) {
+        console.error("Error loading data from Google Sheets:", error);
+        // Data already set to defaults, so this is a graceful fallback
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    loadAllData();
+  }, []);
+
   // Auto scroll chat to bottom when message arrives
   useEffect(() => {
+    // Skip on initial mount so the page doesn't jump to the chat/booking section on first load
+    if (chatMessages.length <= 1 && !isAiTyping) return;
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages, isAiTyping]);
 
@@ -169,7 +231,7 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
     }
 
     setIsSubmittingBooking(true);
-    const serviceDetails = SERVICES.find(s => s.id === bookingService) || SERVICES[1];
+    const serviceDetails = services.find(s => s.id === bookingService) || services[1];
 
     try {
       const response = await fetch("/api/bookings", {
@@ -272,8 +334,8 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
   // Unique categories of skills
   const skillCategories = ["All", "Design & Content", "Systems & Tech", "Admin & Ops", "Strategy & Growth"];
   const filteredSkills = selectedSkillCategory === "All" 
-    ? SKILLS 
-    : SKILLS.filter(s => s.category === selectedSkillCategory);
+    ? skills 
+    : skills.filter(s => s.category === selectedSkillCategory);
 
   return (
     <div id="app-root-container" className="min-h-screen bg-[#f5f2ed] text-[#1a1a1a] flex flex-col font-sans selection:bg-[#CF8A62] selection:text-white">
@@ -283,10 +345,10 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
         <nav className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex flex-col">
             <span className="text-xs font-bold tracking-[0.25em] uppercase text-[#1a1a1a]">
-              Celeste Vance / Portfolio
+              {profile.portfolioLabel}
             </span>
             <span className="text-[10px] uppercase tracking-widest text-[#1a1a1a]/60 font-mono mt-0.5">
-              Creative Operations & System Architect
+              {profile.title}
             </span>
           </div>
 
@@ -305,7 +367,7 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
               Accepting Retainers
             </div>
             <div className="w-9 h-9 rounded-full bg-[#1a1a1a] flex items-center justify-center text-white text-[11px] uppercase font-bold font-display tracking-wider">
-              CV
+              {profile.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
             </div>
             {/* Mobile Menu Toggle Button */}
             <button
@@ -373,11 +435,11 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
               <span>Status</span>
               <span className="flex items-center gap-1 font-bold text-[#6D826B]">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                Accepting Clients
+                {profile.statusText}
               </span>
             </div>
             <div className="text-[10px] text-[#1a1a1a]/50 leading-relaxed font-mono">
-              Servicing creative directors, designers, and scaling coaches globally.
+              {profile.statusSubtext}
             </div>
           </div>
         </div>
@@ -391,30 +453,30 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
           <div className="lg:col-span-8 flex flex-col justify-between h-full">
             <div>
               <div className="text-[10px] uppercase tracking-[0.3em] font-mono text-[#CF8A62] mb-3">
-                / High-Performance Assistance
+                / {profile.heroEyebrow}
               </div>
               <h1 className="text-5xl sm:text-7xl lg:text-8xl leading-[0.9] font-serif italic font-light tracking-tight text-[#1a1a1a] mb-8">
-                Digital<br />
-                <span className="not-italic text-brand-clay-500 font-display font-medium">Concierge</span> & Ops
+                {profile.heroTitleLine1}<br />
+                <span className="not-italic text-brand-clay-500 font-display font-medium">{profile.heroTitleLine2}</span>
               </h1>
               <p className="max-w-xl text-md md:text-lg leading-relaxed text-[#1a1a1a]/85 font-sans mb-10">
-                Hi, I'm Celeste. Bringing high-fidelity structure, aesthetic calm, and seamless automation to scaling creative directors, coaches, and luxury boutique agencies. I architect relational workspaces, triage inbox chaos, and keep your publishing consistent.
+                {profile.bio}
               </p>
             </div>
 
             {/* Quick Metrics grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 border-t border-[#1a1a1a]/10 pt-8 mt-4">
               <div>
-                <div className="text-2xl font-display font-bold text-[#1a1a1a]">6+ Years</div>
-                <div className="text-[10px] uppercase tracking-wider text-[#1a1a1a]/60">Dedicated Support</div>
+                <div className="text-2xl font-display font-bold text-[#1a1a1a]">{profile.metric1Value}</div>
+                <div className="text-[10px] uppercase tracking-wider text-[#1a1a1a]/60">{profile.metric1Label}</div>
               </div>
               <div>
-                <div className="text-2xl font-display font-bold text-[#1a1a1a]">120+ Systems</div>
-                <div className="text-[10px] uppercase tracking-wider text-[#1a1a1a]/60">Launched & Automated</div>
+                <div className="text-2xl font-display font-bold text-[#1a1a1a]">{profile.metric2Value}</div>
+                <div className="text-[10px] uppercase tracking-wider text-[#1a1a1a]/60">{profile.metric2Label}</div>
               </div>
               <div className="col-span-2 sm:col-span-1">
-                <div className="text-2xl font-display font-bold text-[#1a1a1a]">350k+ Hours</div>
-                <div className="text-[10px] uppercase tracking-wider text-[#1a1a1a]/60">Reclaimed for Clients</div>
+                <div className="text-2xl font-display font-bold text-[#1a1a1a]">{profile.metric3Value}</div>
+                <div className="text-[10px] uppercase tracking-wider text-[#1a1a1a]/60">{profile.metric3Label}</div>
               </div>
             </div>
           </div>
@@ -425,23 +487,23 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
               <div className="relative aspect-square rounded-[24px] overflow-hidden bg-[#EAE3D2] mb-6">
                 <img 
                   src={profileImage || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600"} 
-                  alt="Celeste Vance portrait" 
+                  alt={`${profile.name} portrait`} 
                   className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-700" 
                 />
                 <div className="absolute top-4 left-4 bg-[#f5f2ed] border border-[#1a1a1a]/10 rounded-full px-3 py-1 text-[9px] uppercase tracking-widest font-mono text-[#1a1a1a] shadow-sm">
-                  Based in Europe & Remote
+                  {profile.locationBadge}
                 </div>
               </div>
               
               <div className="px-2 pb-2">
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-serif text-lg font-bold italic">Celeste Vance</h3>
+                  <h3 className="font-serif text-lg font-bold italic">{profile.name}</h3>
                   <span className="text-[10px] uppercase tracking-widest font-mono bg-[#889C86]/10 text-[#6D826B] px-2.5 py-0.5 rounded-full font-bold">
-                    Principal VA
+                    {profile.profileBadge}
                   </span>
                 </div>
                 <p className="text-xs text-[#1a1a1a]/75 leading-relaxed">
-                  "I construct workflows that allow creative leaders to trade operational anxiety for structured space to innovate."
+                  "{profile.quote}"
                 </p>
               </div>
             </div>
@@ -484,7 +546,7 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
 
           {/* Interactive packages bento grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {SERVICES.map((pkg) => {
+            {services.map((pkg) => {
               const isSelected = selectedService.id === pkg.id;
               return (
                 <div 
@@ -711,7 +773,7 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
 
           {/* CASE STUDIES CARPLAY / GRID LAYOUT */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {PORTFOLIO_PROJECTS.map((project) => (
+            {projects.map((project) => (
               <div key={project.id} className="bg-white rounded-[32px] overflow-hidden border border-[#1a1a1a]/10 shadow-sm flex flex-col justify-between group">
                 <div>
                   {/* Photo with metric overlap */}
@@ -866,7 +928,7 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
                         onChange={(e) => setBookingService(e.target.value)}
                         className="w-full bg-[#FAF9F6] border border-[#1a1a1a]/15 rounded-xl px-4 py-3 text-xs focus:ring-1 focus:ring-[#CF8A62] outline-none"
                       >
-                        {SERVICES.map((s) => (
+                        {services.map((s) => (
                           <option key={s.id} value={s.id}>
                             {s.name} ({s.priceInfo})
                           </option>
@@ -915,7 +977,7 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
                         3. Pick an Available Strategy Time Slot (GMT-7 Workspace)
                       </label>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                        {TIME_SLOTS.map((slot) => {
+                        {timeSlots.map((slot) => {
                           const isSelected = bookingTimeSlot === slot;
                           return (
                             <button
@@ -1176,28 +1238,28 @@ Let's organize a direct 25-minute strategy call using the Booking System on this
           
           <div className="text-center md:text-left">
             <div className="text-xs font-bold uppercase tracking-[0.2em] mb-1">
-              Celeste Vance / Digital Operations
+              {profile.footerTagline}
             </div>
             <div className="text-[10px] uppercase tracking-[0.3em] font-mono text-[#1a1a1a]/40">
-              Based in Paris & Serving Clients Globally
+              {profile.footerLocation}
             </div>
           </div>
 
           {/* Social icons layout */}
           <div className="flex gap-4">
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-black/10 hover:border-black hover:bg-black hover:text-white flex items-center justify-center text-xs transition-all font-bold">
+            <a href={profile.linkedinUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-black/10 hover:border-black hover:bg-black hover:text-white flex items-center justify-center text-xs transition-all font-bold">
               Li
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-black/10 hover:border-black hover:bg-black hover:text-white flex items-center justify-center text-xs transition-all font-bold">
+            <a href={profile.instagramUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-black/10 hover:border-black hover:bg-black hover:text-white flex items-center justify-center text-xs transition-all font-bold">
               In
             </a>
-            <a href="https://substack.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-black/10 hover:border-black hover:bg-black hover:text-white flex items-center justify-center text-xs transition-all font-bold">
+            <a href={profile.substackUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-black/10 hover:border-black hover:bg-black hover:text-white flex items-center justify-center text-xs transition-all font-bold">
               Sb
             </a>
           </div>
 
           <div className="text-center md:text-right text-[10px] font-mono opacity-40">
-            © 2026 Celeste Vance. Meticulously Structured.
+            {profile.copyright}
           </div>
 
         </div>
